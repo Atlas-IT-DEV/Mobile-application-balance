@@ -29,3 +29,5 @@ async def update_category(category_id: int, category: Categories):
 async def delete_category(category_id: int):
     query = "DELETE FROM categories WHERE id=%s"
     await db.execute_query(query, (category_id,))
+
+#  gwrgwsgsg
