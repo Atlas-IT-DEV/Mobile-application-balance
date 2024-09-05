@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "rgba(255, 255, 255, 1)",
+    fontFamily: "IBMSemiBold",
   },
 });
 export default MiniProfileInfo;
