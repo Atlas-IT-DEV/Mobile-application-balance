@@ -30,7 +30,7 @@ const MainScreen = () => {
         </View>
         <View style={[styles.component, styles.funds]}>
           <FundCard />
-          <FundCard collect_sum={50000} />
+          <FundCard collect_sum={50000} name="Помощь детям" />
         </View>
       </ScrollView>
     </SafeAreaView>

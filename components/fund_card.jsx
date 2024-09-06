@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const FundCard = ({
@@ -6,6 +7,7 @@ const FundCard = ({
   collect_sum = 30000,
   full_sum = 100000,
 }) => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Image
@@ -34,7 +36,10 @@ const FundCard = ({
           </Text>
         </View>
         <View style={styles.buttonsView}>
-          <TouchableOpacity style={[styles.button, styles.detailsButton]}>
+          <TouchableOpacity
+            style={[styles.button, styles.detailsButton]}
+            onPress={() => navigation.navigate("AboutFundScreen")}
+          >
             <Text style={styles.detailsText}>Подробнее</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.helpButton]}>
