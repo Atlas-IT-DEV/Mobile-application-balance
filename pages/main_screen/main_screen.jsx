@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   funds: {
     marginTop: 5,
     gap: 15,
+    marginBottom: 80,
   },
 });
 
