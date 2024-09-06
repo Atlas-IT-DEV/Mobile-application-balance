@@ -9,6 +9,7 @@ import Header from "../../components/header";
 import MiniProfileInfo from "../../components/mini_profile_info";
 import AboutFund from "../../components/about_fund";
 import FundCard from "../../components/fund_card";
+import FilterButton from "../../components/filter_button";
 
 const MainScreen = () => {
   return (
@@ -24,7 +25,9 @@ const MainScreen = () => {
         <View style={[styles.component, styles.aboutFund]}>
           <AboutFund />
         </View>
-        <View style={styles.component}></View>
+        <View style={[styles.component, styles.filterButtons]}>
+          <FilterButton />
+        </View>
         <View style={[styles.component, styles.funds]}>
           <FundCard />
           <FundCard collect_sum={50000} />
@@ -53,8 +56,11 @@ const styles = StyleSheet.create({
   aboutFund: {
     marginTop: 15,
   },
+  filterButtons: {
+    marginTop: 20,
+  },
   funds: {
-    marginTop: 15,
+    marginTop: 5,
     gap: 15,
   },
 });
