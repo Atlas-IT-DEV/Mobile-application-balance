@@ -23,6 +23,7 @@ const BottomMenu = () => {
         style={styles.button}
         onPress={() => {
           setSelected([1, 0, 0]);
+          navigation.navigate("ProfileScreen");
         }}
       >
         <SvgXml xml={selected[0] == 1 ? profileActiveIcon : profileIcon} />
@@ -39,6 +40,7 @@ const BottomMenu = () => {
         style={styles.button}
         onPress={() => {
           setSelected([0, 1, 0]);
+          navigation.navigate("MainScreen");
         }}
       >
         <SvgXml xml={selected[1] == 1 ? homeActiveIcon : homeIcon} />

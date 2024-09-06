@@ -168,3 +168,8 @@ export const notificationActiveIcon = `<svg width="20" height="21" viewBox="0 0 
 </defs>
 </svg>
 `;
+
+export const arrowRightIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.4 13.6L12 8L6.4 2.4L5.84 2.96L10.88 8L5.84 13.04L6.4 13.6Z" fill="#B7B7B7"/>
+</svg>
+`;

@@ -6,6 +6,7 @@ import RootStore from "./store/root_store";
 
 import BottomMenu from "./components/bottom_menu";
 import MainScreen from "./pages/main_screen/main_screen";
+import ProfileScreen from "./pages/profile_screen/profile_screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +25,9 @@ export default function App() {
               initialRouteName="MainScreen"
               screenOptions={{ headerShown: false }}
             >
+              <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
               <Stack.Screen name="MainScreen" component={MainScreen} />
-              <Stack.Screen name="BottomMenu" component={BottomMenu} />
+              {/* <Stack.Screen name="BottomMenu" component={BottomMenu} /> */}
             </Stack.Navigator>
             <BottomMenu />
           </>
