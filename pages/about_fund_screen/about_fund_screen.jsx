@@ -9,7 +9,8 @@ import {
   View,
 } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { clockIcon, peopleIcon } from "../../images/images";
+import { arrowBack, clockIcon, peopleIcon } from "../../images/images";
+import { useNavigation } from "@react-navigation/native";
 
 const AboutFundScreen = ({
   uri = "https://legacy.reactjs.org/logo-og.png",
@@ -19,9 +20,11 @@ const AboutFundScreen = ({
   countPeople = 7162,
   time = "5 дней",
 }) => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
+
       <ScrollView>
         <View style={[styles.component, styles.fundInfo]}>
           <Image
@@ -30,6 +33,14 @@ const AboutFundScreen = ({
             width={"100%"}
             style={styles.mainImage}
           />
+          <TouchableOpacity
+            style={styles.arrowBackButton}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <SvgXml xml={arrowBack} />
+          </TouchableOpacity>
           <View style={styles.mainInfo}>
             <Text style={styles.nameText}>{name}</Text>
             <View style={styles.statusNames}>
@@ -199,6 +210,17 @@ const styles = StyleSheet.create({
     color: "rgba(52, 52, 52, 1)",
     fontFamily: "IBMRegular",
     marginTop: 5,
+  },
+  arrowBackButton: {
+    position: "absolute",
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    left: 20,
+    top: 20,
   },
 });
 export default AboutFundScreen;

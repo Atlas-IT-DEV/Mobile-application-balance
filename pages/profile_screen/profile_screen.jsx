@@ -13,6 +13,7 @@ import SubscribeMiniCard from "../../components/subscribe_mini_card";
 import { useState } from "react";
 import { SvgXml } from "react-native-svg";
 import { closeIcon, warningIcon } from "../../images/images";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = ({
   name = "Имя",
@@ -20,6 +21,7 @@ const ProfileScreen = ({
   phone_number = "+7 (800) 555 35-35",
   inn = "8888 888 888 88",
 }) => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
@@ -31,7 +33,11 @@ const ProfileScreen = ({
         <View style={[styles.component, styles.userInfo]}>
           <View style={styles.headerProfile}>
             <Text style={styles.nameComponentText}>Информация о профиле</Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("EditProfileScreen");
+              }}
+            >
               <Text style={styles.editButtonText}>Изменить</Text>
             </TouchableOpacity>
           </View>
