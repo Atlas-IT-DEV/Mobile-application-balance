@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import Header from "../../components/header";
 import MiniProfileInfo from "../../components/mini_profile_info";
+import AboutFund from "../../components/about_fund";
 
 const MainScreen = () => {
   return (
@@ -16,8 +17,11 @@ const MainScreen = () => {
         <View style={styles.header}>
           <Header />
         </View>
-        <View style={styles.profile}>
+        <View style={[styles.profile, styles.component]}>
           <MiniProfileInfo />
+        </View>
+        <View style={[styles.component, styles.aboutFund]}>
+          <AboutFund />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -29,13 +33,19 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+
+  component: {
+    paddingHorizontal: 20,
+  },
   header: {
     paddingHorizontal: 38,
     marginTop: 15,
   },
   profile: {
-    paddingHorizontal: 20,
     marginTop: 20,
+  },
+  aboutFund: {
+    marginTop: 15,
   },
 });
 

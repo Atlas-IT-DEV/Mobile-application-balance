@@ -26,6 +26,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,1)",
     borderRadius: 20,
+    shadowColor: "rgba(36, 27, 79, 0.2)",
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 2,
   },
   nameText: {
     color: "rgba(52, 52, 52, 1)",
@@ -49,4 +56,5 @@ const styles = StyleSheet.create({
     fontFamily: "IBMSemiBold",
   },
 });
+
 export default MiniProfileInfo;
