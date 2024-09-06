@@ -8,6 +8,7 @@ import {
 import Header from "../../components/header";
 import MiniProfileInfo from "../../components/mini_profile_info";
 import AboutFund from "../../components/about_fund";
+import FundCard from "../../components/fund_card";
 
 const MainScreen = () => {
   return (
@@ -22,6 +23,11 @@ const MainScreen = () => {
         </View>
         <View style={[styles.component, styles.aboutFund]}>
           <AboutFund />
+        </View>
+        <View style={styles.component}></View>
+        <View style={[styles.component, styles.funds]}>
+          <FundCard />
+          <FundCard collect_sum={50000} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -46,6 +52,10 @@ const styles = StyleSheet.create({
   },
   aboutFund: {
     marginTop: 15,
+  },
+  funds: {
+    marginTop: 15,
+    gap: 15,
   },
 });
 
