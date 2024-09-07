@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import GestureRecognizer from "react-native-swipe-gestures";
+import CheckBox from "react-native-check-box";
 import { useState } from "react";
 import { SvgXml } from "react-native-svg";
 import { minusIcon, plusIcon } from "../images/images";
@@ -23,8 +24,9 @@ const FundCard = ({
   const [modalVisible, setModalVisible] = useState([1, 0, 0]);
   const navigation = useNavigation();
   const [isActive, setIsActive] = useState([0, 0, 0]);
-  const [sum, setSum] = useState(30);
+  const [sum, setSum] = useState(10);
   const [selectTypeSum, setSelectTypeSum] = useState([0, 0, 0, 0, 0, 0]);
+  const [checked, setChecked] = useState(false);
   return (
     <View style={styles.container}>
       <Image
@@ -153,13 +155,12 @@ const FundCard = ({
                   >
                     <SvgXml xml={minusIcon} />
                   </TouchableOpacity>
-                  <TouchableOpacity
+                  <View
                     style={[
                       styles.componentMoney,
                       styles.sumView,
                       selectTypeSum[0] == 1 ? styles.activeSumView : null,
                     ]}
-                    onPress={() => setSelectTypeSum([1, 0, 0, 0, 0, 0, 0])}
                   >
                     <Text style={styles.sumViewText}>
                       {sum} ₽
@@ -169,7 +170,7 @@ const FundCard = ({
                         ? " в месяц"
                         : null}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     style={[styles.componentMoney, styles.plusSum]}
                     onPress={() => {
@@ -306,9 +307,25 @@ const FundCard = ({
                           ? "Каждый день"
                           : isActive[1] == 1
                           ? "Каждый месяц"
-                          : "Разовый платеж"}
+                          : isActive[2] == 1
+                          ? "Разовый платеж"
+                          : ""}
                       </Text>
                     </View>
+                  </View>
+                  <TouchableOpacity style={styles.payButton}>
+                    <Text style={styles.payButtonText}>Оплатить</Text>
+                  </TouchableOpacity>
+
+                  <View style={styles.agreeView}>
+                    <CheckBox
+                      isChecked={checked}
+                      onClick={() => setChecked(!checked)}
+                    />
+                    <Text style={styles.agreeText}>
+                      Согласен с условиями Пользовательского соглашения
+                      и Политики обработки персональных данных
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -433,6 +450,7 @@ const styles = StyleSheet.create({
   modalInfo: {
     paddingHorizontal: 20,
     marginTop: 20,
+    marginBottom: 20,
   },
   periodRow: {
     flexDirection: "row",
@@ -560,6 +578,30 @@ const styles = StyleSheet.create({
     color: "rgba(52, 52, 52, 1)",
     fontFamily: "IBMRegular",
     fontSize: 12,
+  },
+  payButton: {
+    alignItems: "center",
+    marginTop: 15,
+    height: 35,
+    justifyContent: "center",
+    backgroundColor: "rgba(48, 31, 129, 1)",
+    borderRadius: 10,
+  },
+  payButtonText: {
+    color: "white",
+    fontFamily: "IBMSemiBold",
+  },
+  agreeView: {
+    flexDirection: "row",
+    marginTop: 15,
+    gap: 8,
+    alignItems: "center",
+  },
+  agreeText: {
+    fontSize: 10,
+    color: "rgba(183, 183, 183, 1)",
+    fontFamily: "IBMMedium",
+    paddingRight: 20,
   },
 });
 
