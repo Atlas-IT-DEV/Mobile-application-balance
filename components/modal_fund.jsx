@@ -26,34 +26,34 @@ const ModalFund = ({ width = "" }) => {
     sum: 10,
   });
 
-  let copiedButtons = { ...data };
+  let copiedData = { ...data };
 
   return (
     <View>
       <TouchableOpacity
         style={[styles.button, styles.helpButton, { minWidth: `${width}` }]}
         onPress={() => {
-          copiedButtons.modalVisible = true;
-          setData(copiedButtons);
+          copiedData.modalVisible = true;
+          setData(copiedData);
         }}
       >
         <Text style={styles.helpText}>Помочь</Text>
       </TouchableOpacity>
-      {copiedButtons.modalVisible && (
+      {copiedData.modalVisible && (
         <GestureRecognizer
           style={{ flex: 1 }}
           onSwipeUp={() => {
-            copiedButtons.modalVisible = true;
-            setData(copiedButtons);
+            copiedData.modalVisible = true;
+            setData(copiedData);
           }}
           onSwipeDown={() => {
-            copiedButtons.modalVisible = false;
-            setData(copiedButtons);
+            copiedData.modalVisible = false;
+            setData(copiedData);
           }}
         >
           <Modal
             animationType="slide"
-            visible={copiedButtons.modalVisible}
+            visible={copiedData.modalVisible}
             presentationStyle="formSheet"
           >
             <View style={styles.swipeLine} />
@@ -66,8 +66,8 @@ const ModalFund = ({ width = "" }) => {
                   <View style={styles.periodRow}>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedButtons.selectPeriod = [1, 0, 0];
-                        setData(copiedButtons);
+                        copiedData.selectPeriod = [1, 0, 0];
+                        setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
@@ -89,8 +89,8 @@ const ModalFund = ({ width = "" }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedButtons.selectPeriod = [0, 1, 0];
-                        setData(copiedButtons);
+                        copiedData.selectPeriod = [0, 1, 0];
+                        setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
@@ -115,8 +115,8 @@ const ModalFund = ({ width = "" }) => {
                   <View style={styles.periodRow}>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedButtons.selectPeriod = [0, 0, 1];
-                        setData(copiedButtons);
+                        copiedData.selectPeriod = [0, 0, 1];
+                        setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
@@ -146,11 +146,11 @@ const ModalFund = ({ width = "" }) => {
                     <TouchableOpacity
                       style={[styles.componentMoney, styles.minusSum]}
                       onPress={() => {
-                        copiedButtons.selectTypeSum = [1, 0, 0, 0, 0, 0];
-                        copiedButtons.sum == 10
-                          ? (copiedButtons.sum = 10)
-                          : (copiedButtons.sum = copiedButtons.sum - 10);
-                        setData(copiedButtons);
+                        copiedData.selectTypeSum = [1, 0, 0, 0, 0, 0];
+                        copiedData.sum == 10
+                          ? (copiedData.sum = 10)
+                          : (copiedData.sum = copiedData.sum - 10);
+                        setData(copiedData);
                       }}
                     >
                       <SvgXml xml={minusIcon} />
@@ -176,8 +176,8 @@ const ModalFund = ({ width = "" }) => {
                     <TouchableOpacity
                       style={[styles.componentMoney, styles.plusSum]}
                       onPress={() => {
-                        copiedButtons.sum = copiedButtons.sum + 10;
-                        setData(copiedButtons);
+                        copiedData.sum = copiedData.sum + 10;
+                        setData(copiedData);
                       }}
                     >
                       <SvgXml xml={plusIcon} />
@@ -193,9 +193,9 @@ const ModalFund = ({ width = "" }) => {
                           : null,
                       ]}
                       onPress={() => {
-                        copiedButtons.selectTypeSum = [0, 1, 0, 0, 0, 0];
-                        copiedButtons.sum = 200;
-                        setData(copiedButtons);
+                        copiedData.selectTypeSum = [0, 1, 0, 0, 0, 0];
+                        copiedData.sum = 200;
+                        setData(copiedData);
                       }}
                     >
                       <Text
@@ -218,9 +218,9 @@ const ModalFund = ({ width = "" }) => {
                           : null,
                       ]}
                       onPress={() => {
-                        copiedButtons.selectTypeSum = [0, 0, 1, 0, 0, 0];
-                        copiedButtons.sum = 400;
-                        setData(copiedButtons);
+                        copiedData.selectTypeSum = [0, 0, 1, 0, 0, 0];
+                        copiedData.sum = 400;
+                        setData(copiedData);
                       }}
                     >
                       <Text
@@ -243,9 +243,9 @@ const ModalFund = ({ width = "" }) => {
                           : null,
                       ]}
                       onPress={() => {
-                        copiedButtons.selectTypeSum = [0, 0, 0, 1, 0, 0];
-                        copiedButtons.sum = 900;
-                        setData(copiedButtons);
+                        copiedData.selectTypeSum = [0, 0, 0, 1, 0, 0];
+                        copiedData.sum = 900;
+                        setData(copiedData);
                       }}
                     >
                       <Text
@@ -268,9 +268,9 @@ const ModalFund = ({ width = "" }) => {
                           : null,
                       ]}
                       onPress={() => {
-                        copiedButtons.selectTypeSum = [0, 0, 0, 0, 1, 0];
-                        copiedButtons.sum = 1000;
-                        setData(copiedButtons);
+                        copiedData.selectTypeSum = [0, 0, 0, 0, 1, 0];
+                        copiedData.sum = 1000;
+                        setData(copiedData);
                       }}
                     >
                       <Text
@@ -296,13 +296,17 @@ const ModalFund = ({ width = "" }) => {
                     <View style={styles.componentMoney}>
                       <TextInput
                         onPress={() => {
-                          copiedButtons.selectTypeSum = [0, 0, 0, 0, 0, 1];
-                          setData(copiedButtons);
+                          copiedData.selectTypeSum = [0, 0, 0, 0, 0, 1];
+                          setData(copiedData);
                         }}
                         placeholder="Ваша сумма"
                         placeholderTextColor="rgba(183, 183, 183, 1)"
                         keyboardType="number-pad"
                         style={styles.inputSum}
+                        onChange={(textInput) => {
+                          copiedData.sum = textInput.nativeEvent.text;
+                          setData(copiedData);
+                        }}
                       />
                     </View>
                   </View>
@@ -338,11 +342,10 @@ const ModalFund = ({ width = "" }) => {
 
                     <View style={styles.agreeView}>
                       <CheckBox
-                        isChecked={copiedButtons.checkButton}
+                        isChecked={copiedData.checkButton}
                         onClick={() => {
-                          copiedButtons.checkButton =
-                            !copiedButtons.checkButton;
-                          setData(copiedButtons);
+                          copiedData.checkButton = !copiedData.checkButton;
+                          setData(copiedData);
                         }}
                       />
                       <Text style={styles.agreeText}>
