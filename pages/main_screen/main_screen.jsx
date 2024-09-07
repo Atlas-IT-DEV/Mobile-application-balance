@@ -4,6 +4,10 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
+  Button,
+  FlatList,
+  Text,
+  Modal,
 } from "react-native";
 import Header from "../../components/header";
 import MiniProfileInfo from "../../components/mini_profile_info";

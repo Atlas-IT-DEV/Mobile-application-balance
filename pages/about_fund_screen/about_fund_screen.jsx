@@ -105,11 +105,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     shadowColor: "rgba(36, 27, 79, 0.2)",
     shadowOffset: {
-      width: 3,
-      height: 3,
+      width: 0,
+      height: 0,
     },
-    shadowOpacity: 0.7,
-    shadowRadius: 2,
+    shadowOpacity: 1,
+    shadowRadius: 8,
   },
   fundInfo: {
     marginTop: 20,

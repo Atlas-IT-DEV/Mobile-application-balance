@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { arrowBack } from "../../images/images";
+import { useNavigation } from "@react-navigation/native";
 
 const EditProfileScreen = ({
   name = "Имя",
@@ -17,6 +18,7 @@ const EditProfileScreen = ({
   phone_number = "+7 (800) 555 35-35",
   inn = "8888 888 888 88",
 }) => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -24,15 +26,17 @@ const EditProfileScreen = ({
         <View style={styles.namePage}>
           <Text style={styles.namePageText}>Редактирование профиля</Text>
         </View>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <SvgXml xml={arrowBack} width={16} height={16} />
         </TouchableOpacity>
-
         <View style={styles.fields}>
           <View style={styles.divideLine} />
           <View style={styles.rowField}>
             <Text style={styles.attributeText}>Имя</Text>
-            <TextInput style={styles.valueText} editable value={name}/>
+            <TextInput style={styles.valueText} editable value={name} />
           </View>
           <View style={styles.divideLine} />
           <View style={styles.rowField}>
