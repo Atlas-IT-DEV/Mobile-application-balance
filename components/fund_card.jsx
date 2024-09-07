@@ -146,6 +146,7 @@ const FundCard = ({
                   <TouchableOpacity
                     style={[styles.componentMoney, styles.minusSum]}
                     onPress={() => {
+                      setSelectTypeSum([1, 0, 0, 0, 0, 0, 0]);
                       setSum(sum - 10);
                       sum == 10 ? setSum(10) : null;
                     }}
@@ -171,7 +172,10 @@ const FundCard = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.componentMoney, styles.plusSum]}
-                    onPress={() => setSum(sum + 10)}
+                    onPress={() => {
+                      setSum(sum + 10);
+                      setSelectTypeSum([1, 0, 0, 0, 0, 0, 0]);
+                    }}
                   >
                     <SvgXml xml={plusIcon} />
                   </TouchableOpacity>
