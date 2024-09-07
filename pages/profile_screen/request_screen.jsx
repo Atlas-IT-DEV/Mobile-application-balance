@@ -21,7 +21,7 @@ const RequestScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView>
+      <ScrollView automaticallyAdjustKeyboardInsets={true}>
         <View style={styles.namePage}>
           <Text style={styles.namePageText}>Заявка на регистрацию</Text>
         </View>

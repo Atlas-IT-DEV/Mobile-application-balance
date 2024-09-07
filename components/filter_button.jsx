@@ -72,7 +72,11 @@ const FilterButton = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flexDirection: "row", gap: 20, paddingBottom: 10 },
+  container: {
+    flexDirection: "row",
+    gap: 20,
+    paddingBottom: 10,
+  },
   button: {
     height: 35,
     justifyContent: "center",
