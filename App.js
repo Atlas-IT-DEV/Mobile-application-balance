@@ -11,6 +11,8 @@ import AboutFundScreen from "./pages/about_fund_screen/about_fund_screen";
 import EditProfileScreen from "./pages/profile_screen/edit_profile_screen";
 import NotificationScreen from "./pages/notification_screen/notification_screen";
 import RequestScreen from "./pages/profile_screen/request_screen";
+import RegistrationScreen from "./pages/registration_screen/registration_screen";
+import LoginScreen from "./pages/login_screen/login_screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,9 +28,14 @@ export default function App() {
         {fontsLoaded && (
           <>
             <Stack.Navigator
-              initialRouteName="MainScreen"
+              initialRouteName="LoginScreen"
               screenOptions={{ headerShown: false }}
             >
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen
+                name="RegistrationScreen"
+                component={RegistrationScreen}
+              />
               <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
               <Stack.Screen name="MainScreen" component={MainScreen} />
               <Stack.Screen
