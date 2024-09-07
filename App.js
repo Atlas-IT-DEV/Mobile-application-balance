@@ -9,6 +9,7 @@ import MainScreen from "./pages/main_screen/main_screen";
 import ProfileScreen from "./pages/profile_screen/profile_screen";
 import AboutFundScreen from "./pages/about_fund_screen/about_fund_screen";
 import EditProfileScreen from "./pages/profile_screen/edit_profile_screen";
+import NotificationScreen from "./pages/notification_screen/notification_screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +38,10 @@ export default function App() {
                 name="EditProfileScreen"
                 component={EditProfileScreen}
               />
-              {/* <Stack.Screen name="BottomMenu" component={BottomMenu} /> */}
+              <Stack.Screen
+                name="NotificationScreen"
+                component={NotificationScreen}
+              />
             </Stack.Navigator>
             <BottomMenu />
           </>

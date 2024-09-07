@@ -70,9 +70,9 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
+    backgroundColor: "rgba(255,255,255,1)",
   },
   namePage: {
-    // position: "relative",
     alignItems: "center",
     marginTop: 25,
   },

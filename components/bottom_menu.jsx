@@ -58,6 +58,7 @@ const BottomMenu = () => {
         style={styles.button}
         onPress={() => {
           setSelected([0, 0, 1]);
+          navigation.navigate("NotificationScreen");
         }}
       >
         <SvgXml
