@@ -6,14 +6,10 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  Modal,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import SubscribeMiniCard from "../../components/subscribe_mini_card";
-import { useState } from "react";
-import { SvgXml } from "react-native-svg";
-import { closeIcon, warningIcon } from "../../images/images";
-import { useNavigation } from "@react-navigation/native";
 import ModalDeteleAccount from "../../components/modal_detete_account";
 
 const ProfileScreen = ({

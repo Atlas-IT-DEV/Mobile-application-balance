@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
+
 import { arrowRightIcon } from "../images/images";
 
 const SubscribeMiniCard = ({

@@ -9,8 +9,9 @@ import {
   TextInput,
 } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { arrowBack } from "../../images/images";
 import { useNavigation } from "@react-navigation/native";
+
+import { arrowBack } from "../../images/images";
 
 const EditProfileScreen = ({
   name = "Имя",

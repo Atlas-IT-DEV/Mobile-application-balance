@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { arrowDown, arrowLinkIcon, arrowUp } from "../images/images";
 import { useState } from "react";
+
+import { arrowDown, arrowLinkIcon, arrowUp } from "../images/images";
 
 const AboutFund = () => {
   const [rows, setRows] = useState(2);

@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const MiniProfileInfo = ({

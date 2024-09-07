@@ -1,8 +1,9 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Modal, View } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { closeIcon, warningIcon } from "../images/images";
 import { useState } from "react";
+
+import { closeIcon, warningIcon } from "../images/images";
 
 const ModalDeteleAccount = () => {
   const [modalVisible, setModalVisible] = useState(false);

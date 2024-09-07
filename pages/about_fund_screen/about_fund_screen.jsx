@@ -9,8 +9,11 @@ import {
   View,
 } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { arrowBack, clockIcon, peopleIcon } from "../../images/images";
 import { useNavigation } from "@react-navigation/native";
+
+import ModalFund from "../../components/modal_fund";
+
+import { arrowBack, clockIcon, peopleIcon } from "../../images/images";
 
 const AboutFundScreen = ({
   uri = "https://legacy.reactjs.org/logo-og.png",
@@ -73,9 +76,9 @@ const AboutFundScreen = ({
                 <Text style={styles.statsText}>{time}</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.helpButton}>
-              <Text style={styles.helpButtonText}>Помочь</Text>
-            </TouchableOpacity>
+            <View style={styles.helpButton}>
+              <ModalFund width={"100%"} />
+            </View>
           </View>
         </View>
         <View style={[styles.component, styles.aboutFund]}>
