@@ -85,7 +85,9 @@ const ProfileScreen = ({
           <Text style={styles.helpText}>
             Если вам или вашим знакомым нужна помощь, обращайтесь
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("RequestScreen")}
+          >
             <Text style={styles.applyText}>Обратиться</Text>
           </TouchableOpacity>
         </View>
