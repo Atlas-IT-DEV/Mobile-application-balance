@@ -1,24 +1,20 @@
-import os
 import pymysql
 from pymysql.err import OperationalError
-from dotenv import load_dotenv
-load_dotenv()
+from config import Config
+from src.utils.custom_logging import setup_logging
 
-HOST = os.getenv("HOST")
-PORT = int(os.getenv("PORT"))
-USER = os.getenv("USER")
-PASSWORD = os.getenv("PASSWORD")
-DB = os.getenv("DB")
+config = Config()
+log = setup_logging()
 
 
 class Database:
     def __init__(self):
         self.connection = pymysql.connect(
-            host=HOST,
-            port=PORT,
-            user=USER,
-            password=PASSWORD,
-            db=DB,
+            host=config.__getattr__("DB_HOST"),
+            db=config.__getattr__("DB"),
+            port=int(config.__getattr__("DB_PORT")),
+            user=config.__getattr__("DB_USER"),
+            password=config.__getattr__("DB_PASSWORD"),
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -28,7 +24,7 @@ class Database:
             if self.connection is None:
                 self.connection.ping(reconnect=True)
         except OperationalError as e:
-            print(e)
+            log.exception(e)
 
     def execute_query(self, query, params=None):
         self.check_and_reconnect()
@@ -48,3 +44,6 @@ class Database:
         with self.connection.cursor() as cursor:
             cursor.execute(query, params)
             return cursor.fetchall()
+
+
+db = Database()

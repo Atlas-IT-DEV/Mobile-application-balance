@@ -1,80 +1,79 @@
 import os
-import uuid
-from src.service import user_services, image_services, product_services
-from src.database.models import Users, Images, Products
-from fastapi import HTTPException, status, UploadFile, File
-from fastapi.responses import FileResponse
-from dotenv import load_dotenv
+from fastapi import HTTPException, status, UploadFile
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+from src.service.image_services import get_image_by_id, create_image, delete_image
+from src.database.models import Images
+from src.utils.write_file_into_server import write_file_into_server
+from src.utils.return_url_object import return_url_object
+from src.utils.list_to_str import encode_list_to_string, decode_string_to_list
+from src.utils.custom_logging import setup_logging
+from config import Config
 
-load_dotenv()
-UPLOAD_DIR_PRODUCT = "./src/public/products"
-UPLOAD_DIR_AVATAR = "./src/public/avatars"
-
-
-async def upload_avatar(file: UploadFile = File(...), user: Users = None):
-    file_location = await file_writer(file, UPLOAD_DIR_AVATAR)
-    # Создаем информацию в базе данных о пути изображения
-    image = await image_services.create_image(Images(url=file_location))
-    user.IconID = image.ID
-    update = await user_services.update_user(user.ID, user)
-    if not update:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="User update failed")
-    # Получаем обновленного пользователя и проверяем данные
-    updated_user = await user_services.get_user_by_id(user.ID)
-    if not updated_user or updated_user.IconID is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="User update failed")
-    return updated_user
+config = Config()
+log = setup_logging()
 
 
-async def upload_product(file: UploadFile = File(...), product: Products = None):
-    file_location = await file_writer(file, UPLOAD_DIR_PRODUCT)
-    # Создаем информацию в базе данных о пути изображения
-    image = await image_services.create_image(Images(url=file_location))
-    product.ImageID = image.ID
-    update = await product_services.update_product(product.ID, product)
-    if not update:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Product update failed")
-    # Получаем обновленный товар и проверяем данные
-    updated_product = await product_services.get_product_by_id(product.ID)
-    if not updated_product or updated_product.ImageID is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Product update failed")
-    return updated_product
+async def upload_images(entity_type: str, files: list[UploadFile],
+                        entity_id: int, get_entity_by_id, update_entity):
+    # Проверяем, существует ли сущность
+    existing_entity = get_entity_by_id(entity_id)
+    if not existing_entity:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"{entity_type.capitalize()} with ID {entity_id} not found")
+    image_ids = []
+    for file in files:
+        unique_filename = await write_file_into_server(entity_type, file)
+        image = create_image(Images(url=f"/{entity_type}/{unique_filename}"))
+        image_ids.append(image.ID)
+    ids = encode_list_to_string(image_ids)
+    existing_entity.ImageID = ids
+    update_entity(entity_id, existing_entity)
+    return get_entity_by_id(entity_id)
 
 
-async def download_avatar(user: Users = None):
-    # Проверяем данные в таблице со ссылками на изображения
-    image = await image_services.get_image_by_id(user.IconID)
-    if not image:
-        raise HTTPException(status_code=404, detail="Image not exist")
-    # Проверяем существование файла в папке
-    if not os.path.exists(image.Url):
-        raise HTTPException(status_code=404, detail="File not exist")
-    return FileResponse(image.Url)
+def download_images(entity_type: str, entity_id: int, get_entity_by_id):
+    # Проверяем существование сущности
+    entity = get_entity_by_id(entity_id)
+    if not entity:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"{entity_type.capitalize()} with ID {entity_id} not found")
+    image_ids = decode_string_to_list(entity.ImageID)
+    urls = []
+    for image_id in image_ids:
+        # Проверяем данные в таблице со ссылками на изображения для сущности
+        image = get_image_by_id(image_id)
+        if not image:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Image with ID {image_id} not found")
+        file_path = os.path.join(config.__getattr__("UPLOAD_DIR"), entity_type, image.Url.split("/")[-1])
+        if not os.path.exists(file_path):
+            log.warning(f"File {file_path} does not exist.")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not exists")
+        url = return_url_object(image)
+        urls.append(url)
+    entity_dict = jsonable_encoder(entity.dict())
+    return JSONResponse({
+        entity_type: entity_dict,
+        "urls": urls
+    })
 
 
-async def download_product(product: Products = None):
-    # Проверяем данные в таблице со ссылками на изображения
-    image = await image_services.get_image_by_id(product.ImageID)
-    if not image:
-        raise HTTPException(status_code=404, detail="Image not exist")
-    # Проверяем существование файла в папке
-    if not os.path.exists(image.Url):
-        raise HTTPException(status_code=404, detail="File not exist")
-    return FileResponse(image.Url)
-
-
-async def file_writer(file, path):
-    """
-    Function for writing file.
-
-    :param file: File to be written
-    :param path: Path to file
-    :return: File writer object
-    """
-    file_extension = file.filename.split('.')[-1]
-    unique_filename = f"{uuid.uuid4()}.{file_extension}"
-    file_location = os.path.join(path, unique_filename)
-    os.makedirs(path, exist_ok=True)
-    with open(file_location, "wb") as buffer:
-        buffer.write(await file.read())
-    return file_location
+def delete_images(entity_type: str, image_ids: list[int]):
+    deleted_images = []
+    for image_id in image_ids:
+        image = get_image_by_id(image_id)
+        if not image:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Image with ID {image_id} not found")
+        file_path = os.path.join(config.__getattr__("UPLOAD_DIR"), entity_type, image.Url.split("/")[-1])
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            log.info(f"File {file_path} deleted successfully.")
+        else:
+            log.warning(f"File {file_path} does not exist.")
+        delete_image(image_id)
+        log.info(f"Image record with ID {image_id} deleted from database.")
+        deleted_images.append(image_id)
+    return {
+        "status": "success",
+        "deleted_images": deleted_images
+    }

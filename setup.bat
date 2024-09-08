@@ -16,6 +16,9 @@ IF NOT EXIST venv (
 :: Создание папки logs.
 mkdir ".\logs\setup" > nul 2>&1
 
+:: Создание папки public.
+mkdir ".\public" > nul 2>&1
+
 :: Деактивация активной среды.
 call .\venv\Scripts\deactivate.bat
 

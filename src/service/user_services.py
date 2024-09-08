@@ -1,7 +1,8 @@
 from src.repository import user_repository
-from src.database.models import User
-from fastapi import HTTPException, status, Form
-from src.utils.hashing import validate_password
+from src.database.models import Users
+from fastapi import HTTPException, status
+from src.utils.exam_services import check_for_duplicates, check_if_exists
+from src.utils.hashing import validate_password, hash_password
 
 
 def get_all_users():
@@ -11,25 +12,43 @@ def get_all_users():
 
 def get_user_by_id(user_id: int):
     user = user_repository.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
     return Users(**user) if user else None
 
 
 def get_user_by_phone(phone: str):
     user = user_repository.get_user_by_phone(phone)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
     return Users(**user) if user else None
 
 
-def create_user(user: User):
+def create_user(user: Users):
+    check_if_exists(
+        get_all=get_all_users,
+        attr_name="Phone",
+        attr_value=user.Phone,
+        exception_detail='Phone already exist'
+    )
     user_id = user_repository.create_user(user)
     return get_user_by_id(user_id)
 
 
-def update_user(user_id: int, user: User):
+def update_user(user_id: int, user: Users):
+    check_for_duplicates(
+        get_all=get_all_users,
+        check_id=user_id,
+        attr_name="Phone",
+        attr_value=user.Phone,
+        exception_detail='Phone already exist'
+    )
+    user.Password = hash_password(user.Password)
     user_repository.update_user(user_id, user)
     return {"message": "User updated successfully"}
 
 
 def delete_user(user_id: int):
+    get_user_by_id(user_id)
     user_repository.delete_user(user_id)
     return {"message": "User deleted successfully"}
-

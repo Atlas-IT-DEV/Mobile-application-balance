@@ -6,7 +6,7 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from src.database.models import Settings
 from datetime import datetime, timedelta
-from src.database.models import User
+from src.database.models import Users
 from typing import Dict
 
 settings = Settings()
@@ -65,7 +65,7 @@ def create_jwt(token_type: str,
     )
 
 
-def create_access_token(user: User) -> str:
+def create_access_token(user: Users) -> str:
     jwt_payload = {
         "sub": user.Role,
         "user_id": user.ID,
@@ -77,7 +77,7 @@ def create_access_token(user: User) -> str:
                       expire_minutes=settings.auth_jwt.access_token_expire_minutes)
 
 
-def create_refresh_token(user: User) -> str:
+def create_refresh_token(user: Users) -> str:
     jwt_payload = {
         "sub": user.ID
     }

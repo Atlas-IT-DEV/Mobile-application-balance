@@ -21,9 +21,9 @@ if %errorlevel% equ 0 (
     REM Проверка, был ли батник запущен двойным кликом
     if /i "%comspec% /c %~0 " equ "%cmdcmdline:"=%" (
         REM echo Этот скрипт запущен с помощью двойного нажатия.
-        cmd /k python.exe main.py 
+        cmd /k pytest
     ) else (
         REM echo Этот скрипт был запущен с помощью командной строки.
-        python.exe main.py
+        pytest
     )
 )

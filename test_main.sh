@@ -27,9 +27,9 @@ if [ $? -eq 0 ]; then
     # shellcheck disable=SC2128
     if [[ "$0" != "$BASH_SOURCE" ]]; then
         echo "Этот скрипт был запущен двойным кликом."
-        python3 ./main.py
+        pytest
     else
         echo "Этот скрипт был запущен из командной строки."
-        python3 ./main.py
+        pytest
     fi
 fi
