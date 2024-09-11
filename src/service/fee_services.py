@@ -20,13 +20,6 @@ def get_all_fees(dirs: bool = False):
             fee_category = get_fee_category_by_id(fee_category_id)
             fee["fee_category"] = fee_category.model_dump(by_alias=True)
             del fee["fee_category_id"]
-        # Заменяем sub_category_id
-        sub_category_id = fee.get("sub_category_id")
-        if sub_category_id:
-            sub_category = get_sub_category_by_id(sub_category_id)
-            fee["sub_category"] = sub_category.model_dump(
-                by_alias=True)
-            del fee["sub_category_id"]
         # Получаем id изображений из image_id
         image_ids = decode_string_to_list(fee.get("image_id"))
         urls = []
@@ -59,13 +52,6 @@ def get_fee_by_id(fee_id: int, dirs: bool = False):
         fee_category = get_fee_category_by_id(fee_category_id)
         fee["fee_category"] = fee_category.model_dump(by_alias=True)
         del fee["fee_category_id"]
-    # Заменяем sub_category_id
-    sub_category_id = fee.get("sub_category_id")
-    if sub_category_id:
-        sub_category = get_sub_category_by_id(sub_category_id)
-        fee["sub_category"] = sub_category.model_dump(
-            by_alias=True)
-        del fee["sub_category_id"]
     # Получаем id изображений из image_id
     image_ids = decode_string_to_list(fee.get("image_id"))
     urls = []
@@ -92,7 +78,6 @@ def create_fee(fee: Fees):
         exception_detail='Fee already exist'
     )
     get_fee_category_by_id(fee.FeeCategoryID)
-    get_sub_category_by_id(fee.SubCategoryID)
     fee_id = fee_repository.create_fee(fee)
     return get_fee_by_id(fee_id)
 
@@ -107,7 +92,6 @@ def update_fee(fee_id: int, fee: Fees):
         exception_detail='Fee already exist'
     )
     get_fee_category_by_id(fee.FeeCategoryID)
-    get_sub_category_by_id(fee.SubCategoryID)
     fee_repository.update_fee(fee_id, fee)
     return {"message": "Fee updated successfully"}
 

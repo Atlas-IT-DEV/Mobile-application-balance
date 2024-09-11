@@ -1,6 +1,6 @@
 from src.repository import subscription_repository
 from src.service.user_services import get_user_by_id
-from src.service.fee_services import get_fee_by_id
+from src.repository.fee_repository import get_fee_by_id
 from src.service.sub_category_services import get_sub_category_by_id
 from src.database.models import SubScripts
 from fastapi import HTTPException

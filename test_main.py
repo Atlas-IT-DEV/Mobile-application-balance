@@ -87,7 +87,6 @@ def generate_test_data(entity_type):
             "final_cost": generate_random_data("number"),
             "gathered_cost": generate_random_data("number"),
             "fee_category_id": None,
-            "sub_category_id": None,
             "image_id": "1,2,3,4"
         },
         "subscription": {
@@ -109,12 +108,9 @@ def setup_entity(entity_type, endpoint, token):
     if entity_type == "fee":
         fee_category_id = setup_entity("fee_category", "fee_categories",
                                        token)
-        sub_category_id = setup_entity("sub_category", "sub_categories",
-                                       token)
         fee_data = generate_test_data("fee")
         entity_data = {**fee_data,
-                       "fee_category_id": fee_category_id,
-                       "sub_category_id": sub_category_id}
+                       "fee_category_id": fee_category_id}
     elif entity_type == "subscription":
         user_id = setup_entity("user", "users", token)
         fee_id = setup_entity("fee", "fees", token)

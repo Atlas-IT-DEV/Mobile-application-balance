@@ -34,6 +34,17 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `contact` text COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `companies`
+--
+
+INSERT IGNORE INTO `companies` (`id`, `name`, `description`, `contact`) VALUES
+(1, 'Tech Solutions', 'IT company', 'tech_solutions@example.com, +7-903-555-1234'),
+(2, 'Green Energy', 'Eco energy', 'green_energy@example.com, +7-495-111-2222'),
+(3, 'Food Express', 'Delivery', 'food_express@example.com, +7-905-777-3344'),
+(4, 'Sky Media', 'Advertising', 'skymedia@example.com, +7-499-888-9900'),
+(5, 'Health Co', 'Medical services', 'health_co@example.com, +7-926-123-4567');
+
 -- --------------------------------------------------------
 
 --
@@ -48,7 +59,6 @@ CREATE TABLE IF NOT EXISTS `fees` (
   `gathered_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `fee_category_id` int(11) NOT NULL,
-  `sub_category_id` int(11) NOT NULL,
   `image_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -56,11 +66,12 @@ CREATE TABLE IF NOT EXISTS `fees` (
 -- Дамп данных таблицы `fees`
 --
 
-INSERT IGNORE INTO `fees` (`id`, `name`, `description`, `final_cost`, `gathered_cost`, `created_at`, `fee_category_id`, `sub_category_id`, `image_id`) VALUES
-(20, 'svwvzgcK', 'RJapQOnx', '187921.00', '215683.00', '2024-09-08 13:53:56', 43, 49, '1,2,3,4'),
-(21, 'elKJkzMr', 'uvovktDn', '400114.00', '707738.00', '2024-09-08 13:53:56', 44, 51, '1,2,3,4'),
-(23, 'ctwHSRUd', 'gWzyANpK', '78093.00', '945059.00', '2024-09-08 13:53:56', 47, 54, '1,2,3,4'),
-(24, 'VRvdruqD', 'PdDvtquE', '945936.00', '992238.00', '2024-09-08 13:53:56', 48, 56, '1,2,3,4');
+INSERT IGNORE INTO `fees` (`id`, `name`, `description`, `final_cost`, `gathered_cost`, `created_at`, `fee_category_id`, `image_id`) VALUES
+(1, 'Tech Conference', 'Annual tech conference 2024', '150000.00', '50000.00', '2024-09-08 14:00:00', 1, '1,2'),
+(2, 'Green Energy Forum', 'Sustainable energy event', '300000.00', '150000.00', '2024-09-08 14:15:00', 2, '3,4'),
+(3, 'Food Fair', 'Gourmet food exhibition', '100000.00', '60000.00', '2024-09-08 14:30:00', 3, '5,6'),
+(4, 'Media Summit', 'Media industry networking', '250000.00', '100000.00', '2024-09-08 14:45:00', 4, '7,8'),
+(5, 'Health Expo', 'Healthcare innovations', '500000.00', '200000.00', '2024-09-08 15:00:00', 5, '9,10');
 
 -- --------------------------------------------------------
 
@@ -78,12 +89,11 @@ CREATE TABLE IF NOT EXISTS `fee_categories` (
 --
 
 INSERT IGNORE INTO `fee_categories` (`id`, `name`) VALUES
-(42, 'ipWoDDzQ'),
-(43, 'tmjPfmYW'),
-(44, 'eJUOwENu'),
-(46, 'AjXFIlPi'),
-(47, 'FIkRoxve'),
-(48, 'ZBSgXzzI');
+(1, 'Healthcare'),
+(2, 'Technology'),
+(3, 'Sustainability'),
+(4, 'Events'),
+(5, 'Media & Advertising');
 
 -- --------------------------------------------------------
 
@@ -99,6 +109,18 @@ CREATE TABLE IF NOT EXISTS `history_payments` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `history_payments`
+--
+
+INSERT IGNORE INTO `history_payments` (`id`, `user_id`, `fee_id`, `pay`, `created_at`) VALUES
+(1, 1, 1, '10000.00', '2024-09-08 15:10:00'),
+(2, 2, 2, '20000.00', '2024-09-08 15:20:00'),
+(3, 3, 3, '5000.00', '2024-09-08 15:30:00'),
+(4, 4, 4, '15000.00', '2024-09-08 15:40:00'),
+(5, 5, 5, '25000.00', '2024-09-08 15:50:00');
+
+
 -- --------------------------------------------------------
 
 --
@@ -109,6 +131,23 @@ CREATE TABLE IF NOT EXISTS `images` (
   `id` int(11) NOT NULL,
   `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `images`
+--
+
+INSERT IGNORE INTO `images` (`id`, `url`) VALUES
+(1, 'https://example.com/images/1.jpg'),
+(2, 'https://example.com/images/2.jpg'),
+(3, 'https://example.com/images/3.jpg'),
+(4, 'https://example.com/images/4.jpg'),
+(5, 'https://example.com/images/5.jpg');
+(6, 'https://example.com/images/6.jpg'),
+(7, 'https://example.com/images/7.jpg'),
+(8, 'https://example.com/images/8.jpg'),
+(9, 'https://example.com/images/9.jpg'),
+(10, 'https://example.com/images/10.jpg');
+
 
 -- --------------------------------------------------------
 
@@ -122,6 +161,17 @@ CREATE TABLE IF NOT EXISTS `subscriptions` (
   `fee_id` int(11) NOT NULL,
   `type_sub_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `subscriptions`
+--
+
+INSERT IGNORE INTO `subscriptions` (`id`, `user_id`, `fee_id`, `type_sub_id`) VALUES
+(1, 1, 1, 1),
+(2, 2, 2, 2),
+(3, 3, 3, 1),
+(4, 4, 4, 2),
+(5, 5, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -139,14 +189,8 @@ CREATE TABLE IF NOT EXISTS `sub_categories` (
 --
 
 INSERT IGNORE INTO `sub_categories` (`id`, `type`) VALUES
-(48, 'dcdzBNlf'),
-(49, 'StZnuGvs'),
-(50, 'TLToQNhp'),
-(51, 'uRqEsyxI'),
-(53, 'ReKuXLPi'),
-(54, 'cklMyXNz'),
-(55, 'oMWEDKtE'),
-(56, 'eDCjfpdX');
+(1, 'DAY'),
+(2, 'MOUNTH');
 
 -- --------------------------------------------------------
 
@@ -169,11 +213,13 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Дамп данных таблицы `users`
 --
 
+-- Дамп данных таблицы `users` с красивыми и реалистичными значениями
 INSERT IGNORE INTO `users` (`id`, `first_name`, `last_name`, `phone`, `INN`, `password`, `data_register`, `role`) VALUES
-(62, 'sXkOSibx', 'BhzqYkLO', 'oxEQGPnM', 'JkIEIFIQ', 'riqmNpfL', '2024-09-08 13:53:56', 'ADMIN'),
-(63, 'FNCrQvvz', 'TclVXiCC', 'vLQzqNDH', 'FuZOuuzk', 'oipgkmcj', '2024-09-08 13:53:56', 'ADMIN'),
-(65, 'xQFgEIyk', 'dEMghdEN', 'GhayYaZw', 'ahjRzBkN', 'PFfJwnnJ', '2024-09-08 13:53:56', 'ADMIN'),
-(66, 'IBVWdtDu', 'PpdkgrAw', 'CwvZniDp', 'fZNqLUkn', 'stenXBnV', '2024-09-08 13:53:56', 'ADMIN');
+(1, 'John', 'Doe', '+7-903-123-4567', '7707083893', '$2y$10$e0.1fO/fkI.kVl5', '2024-09-08 14:00:00', 'USER'),
+(2, 'Jane', 'Smith', '+7-495-987-6543', '7705012397', '$2y$10$wJhP0qfO67jkf9', '2024-09-08 14:05:00', 'ADMIN'),
+(3, 'Alexander', 'Ivanov', '+7-905-334-2211', '7730023447', '$2y$10$Dgk.V83JHiGk58', '2024-09-08 14:10:00', 'USER'),
+(4, 'Maria', 'Petrova', '+7-499-443-3322', '7732124451', '$2y$10$pF6hD84LKxGmiO', '2024-09-08 14:15:00', 'USER'),
+(5, 'Oleg', 'Sidorov', '+7-926-556-6677', '7740015528', '$2y$10$2aQnWmRTx3HNhX', '2024-09-08 14:20:00', 'ADMIN');
 
 --
 -- Индексы сохранённых таблиц
@@ -190,8 +236,7 @@ ALTER TABLE `companies`
 --
 ALTER TABLE `fees`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fee_category_id` (`fee_category_id`),
-  ADD KEY `sub_category_id` (`sub_category_id`);
+  ADD KEY `fee_category_id` (`fee_category_id`);
 
 --
 -- Индексы таблицы `fee_categories`
@@ -294,8 +339,7 @@ ALTER TABLE `users`
 -- Ограничения внешнего ключа таблицы `fees`
 --
 ALTER TABLE `fees`
-  ADD CONSTRAINT `fees_ibfk_1` FOREIGN KEY (`fee_category_id`) REFERENCES `fee_categories` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fees_ibfk_2` FOREIGN KEY (`sub_category_id`) REFERENCES `sub_categories` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fees_ibfk_1` FOREIGN KEY (`fee_category_id`) REFERENCES `fee_categories` (`id`) ON DELETE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `history_payments`
@@ -310,7 +354,7 @@ ALTER TABLE `history_payments`
 ALTER TABLE `subscriptions`
   ADD CONSTRAINT `subscriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `subscriptions_ibfk_2` FOREIGN KEY (`fee_id`) REFERENCES `fees` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `subscriptions_ibfk_3` FOREIGN KEY (`type_sub_id`) REFERENCES `subscriptions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `subscriptions_ibfk_3` FOREIGN KEY (`type_sub_id`) REFERENCES `sub_categories` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

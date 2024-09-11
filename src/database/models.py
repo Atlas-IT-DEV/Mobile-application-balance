@@ -159,9 +159,6 @@ class Fees(BaseModel):
     FeeCategoryID: StrictInt = Field(...,
                                      alias="fee_category_id",
                                      examples=[3])
-    SubCategoryID: StrictInt = Field(...,
-                                     alias="sub_category_id",
-                                     examples=[4])
     ImageID: StrictStr = Field(...,
                                alias="image_id",
                                examples=["1,2,3,4,5"])
@@ -195,7 +192,7 @@ class SubScripts(BaseModel):
                               examples=[1])
     FeeID: StrictInt = Field(...,
                              alias="fee_id",
-                             examples=[3]),
+                             examples=[3])
     TypeID: StrictInt = Field(...,
                               alias="type_sub_id",
                               examples=[5])
@@ -219,3 +216,9 @@ class HistoryPays(BaseModel):
     CreatedAt: Optional[datetime] = Field(datetime.now(),
                                           alias="created_at",
                                           examples=[f"{datetime.now()}"])
+
+
+# TODO FAILED test_main.py::test_update_entity[subscription-subscriptions-update_data6]
+#  - pymysql.err.DataError: (1366, "Incorrect integer value: 'annotation=NoneType required=True
+#  alias='fee_id' alias_pri ->
+#  Где-то при инициализации модели может быть опечатка, в этом случае была лишняя запятая
