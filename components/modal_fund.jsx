@@ -18,42 +18,51 @@ import { minusIcon, plusIcon } from "../images/images";
 const ModalFund = ({ width = "" }) => {
   const navigation = useNavigation();
 
-  const [data, setData] = useState({
-    modalVisible: false,
-    selectPeriod: [1, 0, 0],
-    selectTypeSum: [0, 0, 0, 0, 0, 0],
-    checkButton: false,
-    sum: 10,
-  });
+  // const [data, setData] = useState({
+  //   modalVisible: false,
+  //   selectPeriod: [1, 0, 0],
+  //   selectTypeSum: [0, 0, 0, 0, 0, 0],
+  //   checkButton: false,
+  //   sum: 10,
+  // });
 
-  let copiedData = { ...data };
+  // modalVisible; checkButton; selectPeroid; selectTypeSum; sum
+  const [data, setData] = useState([
+    false,
+    false,
+    [1, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    10,
+  ]);
+
+  let copiedData = Array.from(data);
+  console.log(typeof copiedData[0]);
 
   return (
     <View>
       <TouchableOpacity
         style={[styles.button, styles.helpButton, { minWidth: `${width}` }]}
         onPress={() => {
-          copiedData.modalVisible = true;
           setData(copiedData);
         }}
       >
         <Text style={styles.helpText}>Помочь</Text>
       </TouchableOpacity>
-      {copiedData.modalVisible && (
+      {copiedData[0] && (
         <GestureRecognizer
           style={{ flex: 1 }}
           onSwipeUp={() => {
-            copiedData.modalVisible = true;
+            // copiedData[0] = true;
             setData(copiedData);
           }}
           onSwipeDown={() => {
-            copiedData.modalVisible = false;
+            // copiedData[0] = false;
             setData(copiedData);
           }}
         >
           <Modal
             animationType="slide"
-            visible={copiedData.modalVisible}
+            // visible={copiedData[0]}
             presentationStyle="formSheet"
           >
             <View style={styles.swipeLine} />
