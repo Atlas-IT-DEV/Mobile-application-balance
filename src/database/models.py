@@ -73,17 +73,6 @@ class Auth(BaseModel):
                                 examples=["<PASSWORD>"])
 
 
-class Images(BaseModel):
-    """
-    Model of image
-    """
-    ID: Optional[int] = Field(None,
-                              alias="id")
-    Url: Optional[StrictStr] = Field(None,
-                                     alias="url",
-                                     examples=["http://example.com"])
-
-
 class Users(BaseModel):
     """
     Model of user
@@ -159,9 +148,9 @@ class Fees(BaseModel):
     FeeCategoryID: StrictInt = Field(...,
                                      alias="fee_category_id",
                                      examples=[3])
-    ImageID: StrictStr = Field(...,
-                               alias="image_id",
-                               examples=["1,2,3,4,5"])
+    ImageUrl: Optional[StrictStr] = Field(None,
+                                          alias="image_url",
+                                          examples=["http://example.png"])
 
 
 class Companies(BaseModel):
@@ -216,7 +205,6 @@ class HistoryPays(BaseModel):
     CreatedAt: Optional[datetime] = Field(datetime.now(),
                                           alias="created_at",
                                           examples=[f"{datetime.now()}"])
-
 
 # TODO FAILED test_main.py::test_update_entity[subscription-subscriptions-update_data6]
 #  - pymysql.err.DataError: (1366, "Incorrect integer value: 'annotation=NoneType required=True

@@ -59,19 +59,19 @@ CREATE TABLE IF NOT EXISTS `fees` (
   `gathered_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `fee_category_id` int(11) NOT NULL,
-  `image_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `fees`
 --
 
-INSERT IGNORE INTO `fees` (`id`, `name`, `description`, `final_cost`, `gathered_cost`, `created_at`, `fee_category_id`, `image_id`) VALUES
-(1, 'Tech Conference', 'Annual tech conference 2024', '150000.00', '50000.00', '2024-09-08 14:00:00', 1, '1,2'),
-(2, 'Green Energy Forum', 'Sustainable energy event', '300000.00', '150000.00', '2024-09-08 14:15:00', 2, '3,4'),
-(3, 'Food Fair', 'Gourmet food exhibition', '100000.00', '60000.00', '2024-09-08 14:30:00', 3, '5,6'),
-(4, 'Media Summit', 'Media industry networking', '250000.00', '100000.00', '2024-09-08 14:45:00', 4, '7,8'),
-(5, 'Health Expo', 'Healthcare innovations', '500000.00', '200000.00', '2024-09-08 15:00:00', 5, '9,10');
+INSERT IGNORE INTO `fees` (`id`, `name`, `description`, `final_cost`, `gathered_cost`, `created_at`, `fee_category_id`, `image_url`) VALUES
+(1, 'Tech Conference', 'Annual tech conference 2024', '150000.00', '50000.00', '2024-09-08 14:00:00', 1, 'http://example.png'),
+(2, 'Green Energy Forum', 'Sustainable energy event', '300000.00', '150000.00', '2024-09-08 14:15:00', 2, 'http://example.png'),
+(3, 'Food Fair', 'Gourmet food exhibition', '100000.00', '60000.00', '2024-09-08 14:30:00', 3, 'http://example.png'),
+(4, 'Media Summit', 'Media industry networking', '250000.00', '100000.00', '2024-09-08 14:45:00', 4, 'http://example.png'),
+(5, 'Health Expo', 'Healthcare innovations', '500000.00', '200000.00', '2024-09-08 15:00:00', 5, 'http://example.png');
 
 -- --------------------------------------------------------
 
@@ -119,35 +119,6 @@ INSERT IGNORE INTO `history_payments` (`id`, `user_id`, `fee_id`, `pay`, `create
 (3, 3, 3, '5000.00', '2024-09-08 15:30:00'),
 (4, 4, 4, '15000.00', '2024-09-08 15:40:00'),
 (5, 5, 5, '25000.00', '2024-09-08 15:50:00');
-
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `images`
---
-
-CREATE TABLE IF NOT EXISTS `images` (
-  `id` int(11) NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `images`
---
-
-INSERT IGNORE INTO `images` (`id`, `url`) VALUES
-(1, 'https://example.com/images/1.jpg'),
-(2, 'https://example.com/images/2.jpg'),
-(3, 'https://example.com/images/3.jpg'),
-(4, 'https://example.com/images/4.jpg'),
-(5, 'https://example.com/images/5.jpg');
-(6, 'https://example.com/images/6.jpg'),
-(7, 'https://example.com/images/7.jpg'),
-(8, 'https://example.com/images/8.jpg'),
-(9, 'https://example.com/images/9.jpg'),
-(10, 'https://example.com/images/10.jpg');
-
 
 -- --------------------------------------------------------
 
@@ -253,12 +224,6 @@ ALTER TABLE `history_payments`
   ADD KEY `fee_id` (`fee_id`);
 
 --
--- Индексы таблицы `images`
---
-ALTER TABLE `images`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Индексы таблицы `subscriptions`
 --
 ALTER TABLE `subscriptions`
@@ -306,12 +271,6 @@ ALTER TABLE `fee_categories`
 --
 ALTER TABLE `history_payments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT для таблицы `images`
---
-ALTER TABLE `images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT для таблицы `subscriptions`

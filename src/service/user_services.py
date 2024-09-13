@@ -31,6 +31,7 @@ def create_user(user: Users):
         attr_value=user.Phone,
         exception_detail='Phone already exist'
     )
+    user.Password = hash_password(user.Password)
     user_id = user_repository.create_user(user)
     return get_user_by_id(user_id)
 

@@ -67,9 +67,6 @@ def generate_test_data(entity_type):
             "password": generate_random_data("string"),
             "role": "ADMIN"
         },
-        "image": {
-            "url": generate_random_data("string")
-        },
         "fee_category": {
             "name": generate_random_data("string")
         },
@@ -87,7 +84,7 @@ def generate_test_data(entity_type):
             "final_cost": generate_random_data("number"),
             "gathered_cost": generate_random_data("number"),
             "fee_category_id": None,
-            "image_id": "1,2,3,4"
+            "image_url": "http://example.png"
         },
         "subscription": {
             "user_id": None,
@@ -166,7 +163,6 @@ create_admin()
                        "phone",
                        "INN",
                        "password"]),
-    ("image", "images", ["url"]),
     ("fee_category", "fee_categories", ["name"]),
     ("company", "companies", ["name"]),
     ("sub_category", "sub_categories", ["type"]),
@@ -196,7 +192,6 @@ def test_create_and_get_entity(entity_type, endpoint, expected_keys):
                        "phone": generate_random_data("string"),
                        "INN": generate_random_data("string"),
                        "password": generate_random_data("string")}),
-    ("image", "images", {"url": generate_random_data("string")}),
     ("fee_category", "fee_categories", {"name": generate_random_data("string")}),
     ("company", "companies", {"name": generate_random_data("string")}),
     ("sub_category", "sub_categories", {"type": generate_random_data("string")}),
@@ -227,7 +222,6 @@ def test_update_entity(entity_type, endpoint, update_data):
 # Удаление администратора
 def del_admin():
     phone = admin_data[0].get("phone")
-    print(phone)
     response = api_request("GET", f"/users/phone/{phone}",
                            headers={"Authorization": f"Bearer {access_token}"})
     admin = response.json()

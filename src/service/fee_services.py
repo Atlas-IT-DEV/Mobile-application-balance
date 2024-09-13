@@ -5,8 +5,6 @@ from src.utils.exam_services import check_for_duplicates, check_if_exists
 from src.service.fee_category_services import get_fee_category_by_id
 from src.service.sub_category_services import get_sub_category_by_id
 from src.utils.return_url_object import return_url_object
-from src.service.image_services import get_image_by_id
-from src.utils.list_to_str import encode_list_to_string, decode_string_to_list
 
 
 def get_all_fees(dirs: bool = False):
@@ -20,18 +18,6 @@ def get_all_fees(dirs: bool = False):
             fee_category = get_fee_category_by_id(fee_category_id)
             fee["fee_category"] = fee_category.model_dump(by_alias=True)
             del fee["fee_category_id"]
-        # Получаем id изображений из image_id
-        image_ids = decode_string_to_list(fee.get("image_id"))
-        urls = []
-        for image_id in image_ids:
-            # Обрабатываем URL для первого изображения
-            try:
-                url = get_image_by_id(image_id)
-                url = return_url_object(url)
-                urls.append(url)
-            except HTTPException:
-                urls.append(None)
-        fee["urls"] = urls
         list_fees.append(fee)
     if dirs:
         return list_fees
@@ -52,18 +38,6 @@ def get_fee_by_id(fee_id: int, dirs: bool = False):
         fee_category = get_fee_category_by_id(fee_category_id)
         fee["fee_category"] = fee_category.model_dump(by_alias=True)
         del fee["fee_category_id"]
-    # Получаем id изображений из image_id
-    image_ids = decode_string_to_list(fee.get("image_id"))
-    urls = []
-    for image_id in image_ids:
-        # Обрабатываем URL для первого изображения
-        try:
-            url = get_image_by_id(image_id)
-            url = return_url_object(url)
-            urls.append(url)
-        except HTTPException:
-            urls.append(None)
-    fee["urls"] = urls
     if dirs:
         return fee
     else:

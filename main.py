@@ -1,11 +1,11 @@
 from fastapi import FastAPI, HTTPException, Depends, Request, File, UploadFile, Body, Header, status, Form
 from src.database.my_connector import Database
-from src.service import (user_services, auth_services, image_services, fee_category_services,
+from src.service import (user_services, auth_services, fee_category_services,
                          company_services, sub_category_services, fee_services,
-                         subscription_services, history_payment_services)
+                         subscription_services, history_payment_services, file_services)
 from typing import Dict
 from fastapi.openapi.models import Tag
-from src.database.models import (Users, TokenInfo, AuthJWT, Images, FeeCategories, Companies,
+from src.database.models import (Users, TokenInfo, AuthJWT, FeeCategories, Companies,
                                  SubCategories, Fees, SubScripts, HistoryPays)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
@@ -13,10 +13,13 @@ from src.utils.jwt_bearer import JWTBearer
 from jwt import InvalidTokenError
 from src.utils.custom_logging import setup_logging
 from config import Config
+from fastapi.staticfiles import StaticFiles
 
 config = Config()
 log = setup_logging()
 app = FastAPI()
+
+app.mount("/public", StaticFiles(directory="public"), name="public")
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,7 +38,6 @@ SubCategoryTag = Tag(name="SubCategory", description="CRUD operations sub catego
 SubscriptionTag = Tag(name="Subscription", description="CRUD operations subscription")
 HistoryPaymentTag = Tag(name="HistoryPayment", description="CRUD operations history payment")
 CompanyTag = Tag(name="Company", description="CRUD operations company")
-ImageTag = Tag(name="Image", description="CRUD operations image")
 FeeTag = Tag(name="Fee", description="CRUD operations fee")
 
 # Настройка документации с тегами
@@ -48,7 +50,6 @@ app.openapi_tags = [
     SubscriptionTag.model_dump(),
     HistoryPaymentTag.model_dump(),
     CompanyTag.model_dump(),
-    ImageTag.model_dump(),
     FeeTag.model_dump()
 ]
 
@@ -121,7 +122,7 @@ async def get_current_auth_user(user: Users = Depends(auth_services.UserGetFromT
 
 @app.post("/image_upload/fee", response_model=Fees, tags=["ImageService"],
           dependencies=[Depends(JWTBearer(access_level=1))])
-async def image_upload_fee(files: list[UploadFile] = File(...), fee_id: int = Form(...)):
+async def image_upload_fee(file: UploadFile = File(...), fee_id: int = Form(...)):
     """
    Route for uploading multiple images for a fee.
 
@@ -130,29 +131,10 @@ async def image_upload_fee(files: list[UploadFile] = File(...), fee_id: int = Fo
     try:
         return await file_services.upload_images(
             entity_type="fee",
-            files=files,
+            file=file,
             entity_id=fee_id,
             get_entity_by_id=fee_services.get_fee_by_id,
-            update_entity=fee_services.update_fee
-        )
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.get("/image_download/fee", response_model=Dict, tags=["ImageService"])
-async def image_download_fee(fee_id: int):
-    """
-   Route for download fee into basedata.
-
-   :return: response model Dict.
-   """
-    try:
-        return file_services.download_images(
-            entity_type="fee",
-            entity_id=fee_id,
-            get_entity_by_id=fee_services.get_fee_by_id
-        )
+            update_entity=fee_services.update_fee)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -160,14 +142,17 @@ async def image_download_fee(fee_id: int):
 
 @app.delete("/image_delete/fee", response_model=Dict, tags=None,
             dependencies=[Depends(JWTBearer(access_level=1))])
-async def image_delete_fee(image_ids: list[int]):
+async def image_delete_fee(fee_id: int):
     """
    Route for delete fee into basedata.
 
    :return: response model Dict.
    """
     try:
-        return file_services.delete_images(entity_type="fee", image_ids=image_ids)
+        return file_services.delete_images(entity_type="fee",
+                                           entity_id=fee_id,
+                                           get_entity_by_id=fee_services.get_fee_by_id,
+                                           update_entity=fee_services.update_fee)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -272,93 +257,6 @@ async def delete_user(user_id):
         raise ex
 
 
-@app.get("/images/", response_model=list[Images], tags=["Image"])
-async def get_all_images():
-    """
-    Route for get all image from basedata.
-
-    :return: response model List[Images].
-    """
-    try:
-        return image_services.get_all_images()
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.get("/images/image_id/{image_id}", response_model=Images, tags=["Image"])
-async def get_image_by_id(image_id: int):
-    """
-    Route for get image by imageID.
-
-    :param image_id: ID by image. [int]
-
-    :param image: Model image. [Images]
-
-    :return: response model Images.
-    """
-    try:
-        return image_services.get_image_by_id(image_id)
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.post("/images/", response_model=Images, tags=["Image"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
-async def create_image(image: Images):
-    """
-    Route for create image in basedata.
-
-    :param image_id: ID by image. [int]
-
-    :param image: Model image. [Images]
-
-    :return: response model Images.
-    """
-    try:
-        return image_services.create_image(image)
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.put("/images/{image_id}", response_model=Dict, tags=["Image"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_image(image_id, image: Images):
-    """
-    Route for update image in basedata.
-
-    :param image_id: ID by image. [int]
-
-    :param image: Model image. [Images]
-
-    :return: response model dict.
-    """
-    try:
-        return image_services.update_image(image_id, image)
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.delete("/images/{image_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
-async def delete_image(image_id):
-    """
-    Route for delete image from basedata.
-
-    :param image_id: ID by image. [int]
-
-    :return: response model dict.
-    """
-    try:
-        return image_services.delete_image(image_id)
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
 @app.get("/fees/", response_model=list[Fees], tags=["Fee"])
 async def get_all_fees():
     """
@@ -373,7 +271,7 @@ async def get_all_fees():
         raise ex
 
 
-@app.get("/fees/full", response_model=list[Fees], tags=["Fee"])
+@app.get("/fees/full", response_model=list[Dict], tags=["Fee"])
 async def get_all_fees():
     """
     Route for getting all fees from basedata.

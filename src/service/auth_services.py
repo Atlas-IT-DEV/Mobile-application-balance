@@ -34,7 +34,6 @@ def get_user_by_payload(payload):
 
 
 def signup(user: Users):
-    user.Password = hash_password(user.Password)
     current_user = user_services.create_user(user)
     return TokenInfo(access_token=create_access_token(current_user),
                      refresh_token=create_refresh_token(current_user))

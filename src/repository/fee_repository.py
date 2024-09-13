@@ -14,10 +14,10 @@ def get_fee_by_id(fee_id: int):
 
 def create_fee(fee: Fees):
     query = ("INSERT INTO fees (name, description, final_cost, gathered_cost,"
-             " created_at, fee_category_id, image_id)"
+             " created_at, fee_category_id, image_url)"
              " VALUES (%s, %s, %s, %s, %s, %s, %s)")
     params = (fee.Name, fee.Desc, fee.FCost, fee.GCost, fee.CreatedAt,
-              fee.FeeCategoryID, fee.ImageID)
+              fee.FeeCategoryID, fee.ImageUrl)
     cursor = db.execute_query(query, params)
     return cursor.lastrowid
 
@@ -25,9 +25,9 @@ def create_fee(fee: Fees):
 def update_fee(fee_id: int, fee: Fees):
     query = ("UPDATE fees SET name=%s, description=%s, final_cost=%s,"
              " gathered_cost=%s, created_at=%s, fee_category_id=%s,"
-             " image_id=%s WHERE id=%s")
+             " image_url=%s WHERE id=%s")
     params = (fee.Name, fee.Desc, fee.FCost, fee.GCost, fee.CreatedAt,
-              fee.FeeCategoryID, fee.ImageID, fee_id)
+              fee.FeeCategoryID, fee.ImageUrl, fee_id)
     db.execute_query(query, params)
 
 
