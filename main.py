@@ -3,7 +3,7 @@ from src.database.my_connector import Database
 from src.service import (user_services, auth_services, fee_category_services,
                          company_services, sub_category_services, fee_services,
                          subscription_services, history_payment_services, file_services)
-from typing import Dict
+from typing import Dict, Union
 from fastapi.openapi.models import Tag
 from src.database.models import (Users, TokenInfo, AuthJWT, FeeCategories, Companies,
                                  SubCategories, Fees, SubScripts, HistoryPays)
@@ -223,7 +223,7 @@ async def create_user(user: Users):
 
 @app.put("/users/{user_id}", response_model=Dict, tags=["User"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_user(user_id, user: Users):
+async def update_user(user_id, user: Dict):
     """
     Route for update user in basedata.
 
@@ -257,36 +257,28 @@ async def delete_user(user_id):
         raise ex
 
 
-@app.get("/fees/", response_model=list[Fees], tags=["Fee"])
-async def get_all_fees():
+@app.get("/fees/", response_model=Union[list[Fees], list[Dict]], tags=["Fee"])
+async def get_all_fees(category_id: int = None, dirs: bool = False, limit: int = None, offset: int = None):
     """
     Route for getting all fees from basedata.
 
     :return: response model List[Fees].
     """
     try:
-        return fee_services.get_all_fees(dirs=False)
+        if limit is not None and offset is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Offset is required")
+        if offset is not None and limit is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Limit is required")
+        return fee_services.get_all_fees(category_id=category_id, dirs=dirs, limit=limit, offset=offset)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/fees/full", response_model=list[Dict], tags=["Fee"])
-async def get_all_fees():
-    """
-    Route for getting all fees from basedata.
-
-    :return: response model List[Fees].
-    """
-    try:
-        return fee_services.get_all_fees(dirs=True)
-    except HTTPException as ex:
-        log.exception(f"Error", exc_info=ex)
-        raise ex
-
-
-@app.get("/fees/fee_id/{fee_id}", response_model=Fees, tags=["Fee"])
-async def get_fee_by_id(fee_id: int):
+@app.get("/fees/fee_id/{fee_id}", response_model=Union[Fees, Dict], tags=["Fee"])
+async def get_fee_by_id(fee_id: int, dirs: bool = False):
     """
     Route for getting fee by FeeID.
 
@@ -295,23 +287,23 @@ async def get_fee_by_id(fee_id: int):
     :return: response model Fees.
     """
     try:
-        return fee_services.get_fee_by_id(fee_id, dirs=False)
+        return fee_services.get_fee_by_id(fee_id, dirs=dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/fees/full/fee_id/{fee_id}", response_model=Fees, tags=["Fee"])
-async def get_fee_by_id(fee_id: int):
+@app.get("/fees/fee_name/{fee_name}", response_model=Union[Fees, Dict], tags=["Fee"])
+async def get_fee_by_name(fee_name: str, dirs: bool = False):
     """
-    Route for getting fee by FeeID.
+    Route for getting fee by FeeName.
 
-    :param fee_id: ID of the fee. [int]
+    :param name: name of the fee. [str]
 
     :return: response model Fees.
     """
     try:
-        return fee_services.get_fee_by_id(fee_id, dirs=True)
+        return fee_services.get_fee_by_name(fee_name, dirs=dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -336,7 +328,7 @@ async def create_fee(fee: Fees):
 
 @app.put("/fees/{fee_id}", response_model=Dict, tags=["Fee"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_fee(fee_id: int, fee: Fees):
+async def update_fee(fee_id: int, fee: Dict):
     """
     Route for updating a fee in basedata.
 
@@ -384,6 +376,22 @@ async def get_all_fee_categories():
         raise ex
 
 
+@app.get("/fee_categories/fees/", response_model=Union[list[Fees], list[Dict]], tags=["FeeCategory"])
+async def get_all_fee_by_category_name(category_name: str, dirs: bool = False):
+    """
+    Route for get all fees by category name from basedata.
+
+    :param category_name: name of the category. [str]
+
+    :return: response model List[Fees].
+    """
+    try:
+        return fee_category_services.get_all_fee_by_category_name(category_name, dirs=dirs)
+    except HTTPException as ex:
+        log.exception(f"Error", exc_info=ex)
+        raise ex
+
+
 @app.get("/fee_categories/fee_category_id/{fee_category_id}", response_model=FeeCategories, tags=["FeeCategory"])
 async def get_fee_category_by_id(fee_category_id: int):
     """
@@ -419,7 +427,7 @@ async def create_fee_category(fee_category: FeeCategories):
 
 @app.put("/fee_categories/{fee_category_id}", response_model=Dict, tags=["FeeCategory"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_fee_category(fee_category_id, fee_category: FeeCategories):
+async def update_fee_category(fee_category_id, fee_category: Dict):
     """
     Route for update fee_category in basedata.
 
@@ -502,7 +510,7 @@ async def create_sub_category(sub_category: SubCategories):
 
 @app.put("/sub_categories/{sub_category_id}", response_model=Dict, tags=["SubCategory"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_sub_category(sub_category_id, sub_category: SubCategories):
+async def update_sub_category(sub_category_id, sub_category: Dict):
     """
     Route for update sub_category in basedata.
 
@@ -585,7 +593,7 @@ async def create_company(company: Companies):
 
 @app.put("/companies/{company_id}", response_model=Dict, tags=["Company"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_company(company_id, company: Companies):
+async def update_company(company_id, company: Dict):
     """
     Route for update company in basedata.
 
@@ -619,23 +627,23 @@ async def delete_company(company_id):
         raise ex
 
 
-@app.get("/subscriptions/", response_model=list[SubScripts], tags=["Subscription"])
-async def get_all_subscriptions():
+@app.get("/subscriptions/", response_model=Union[list[SubScripts], list[Dict]], tags=["Subscription"])
+async def get_all_subscriptions(dirs: bool = False):
     """
     Route for getting all subscriptions from basedata.
 
     :return: response model List[SubScripts].
     """
     try:
-        return subscription_services.get_all_subscriptions()
+        return subscription_services.get_all_subscriptions(dirs=dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/subscriptions/subscription_id/{subscription_id}", response_model=SubScripts,
+@app.get("/subscriptions/subscription_id/{subscription_id}", response_model=Union[SubScripts, Dict],
          tags=["Subscription"])
-async def get_subscription_by_id(subscription_id: int):
+async def get_subscription_by_id(subscription_id: int, dirs: bool = False):
     """
     Route for getting subscription by SubScriptID.
 
@@ -644,15 +652,15 @@ async def get_subscription_by_id(subscription_id: int):
     :return: response model SubScripts.
     """
     try:
-        return subscription_services.get_subscription_by_id(subscription_id)
+        return subscription_services.get_subscription_by_id(subscription_id, dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/subscriptions/user_id/{user_id}", response_model=SubScripts,
+@app.get("/subscriptions/user_id/{user_id}", response_model=Union[list[SubScripts], list[Dict]],
          tags=["Subscription"])
-async def get_subscription_by_user_id(user_id: int):
+async def get_subscription_by_user_id(user_id: int, dirs: bool = False):
     """
     Route for getting subscription by SubScriptID.
 
@@ -661,7 +669,7 @@ async def get_subscription_by_user_id(user_id: int):
     :return: response model SubScripts.
     """
     try:
-        return subscription_services.get_subscription_by_user_id(user_id)
+        return subscription_services.get_subscription_by_user_id(user_id, dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -686,7 +694,7 @@ async def create_subscription(subscription: SubScripts):
 
 @app.put("/subscriptions/{subscription_id}", response_model=Dict, tags=["Subscription"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_subscription(subscription_id: int, subscription: SubScripts):
+async def update_subscription(subscription_id: int, subscription: Dict):
     """
     Route for updating an subscription in basedata.
 
@@ -720,23 +728,23 @@ async def delete_subscription(subscription_id: int):
         raise ex
 
 
-@app.get("/history_payments/", response_model=list[HistoryPays], tags=["HistoryPayment"])
-async def get_all_history_payments():
+@app.get("/history_payments/", response_model=Union[list[HistoryPays], list[Dict]], tags=["HistoryPayment"])
+async def get_all_history_payments(dirs: bool = False):
     """
     Route for getting all history_payments from basedata.
 
     :return: response model List[HistoryPays].
     """
     try:
-        return history_payment_services.get_all_history_payments()
+        return history_payment_services.get_all_history_payments(dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/history_payments/history_payment_id/{history_payment_id}", response_model=HistoryPays,
+@app.get("/history_payments/history_payment_id/{history_payment_id}", response_model=Union[HistoryPays, Dict],
          tags=["HistoryPayment"])
-async def get_history_payment_by_id(history_payment_id: int):
+async def get_history_payment_by_id(history_payment_id: int, dirs: bool = False):
     """
     Route for getting history_payment by HistoryPayID.
 
@@ -745,15 +753,49 @@ async def get_history_payment_by_id(history_payment_id: int):
     :return: response model HistoryPays.
     """
     try:
-        return history_payment_services.get_history_payment_by_id(history_payment_id)
+        return history_payment_services.get_history_payment_by_id(history_payment_id, dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
 
 
-@app.get("/history_payments/user_id/{user_id}", response_model=HistoryPays,
+@app.get("/history_payments/fee_name/{fee_name}", response_model=list[Dict], tags=["HistoryPayment"])
+async def get_history_payment_by_fee_name(fee_name: str):
+    """
+    Route for getting history_payment by FeeName.
+
+    :param fee_name: name of the fee. [str]
+
+    :return: response model HistoryPays.
+    """
+    try:
+        return history_payment_services.get_history_payment_by_fee_name(fee_name)
+    except HTTPException as ex:
+        log.exception(f"Error", exc_info=ex)
+        raise ex
+
+
+@app.get("/history_payments/fee_name/{fee_name}/user_id/{user_id}", response_model=list[Dict], tags=["HistoryPayment"])
+async def get_history_payment_by_fee_name_and_user_id(fee_name: str, user_id: int):
+    """
+    Route for getting history_payment by FeeName and UserID.
+
+    :param fee_name: name of the fee. [str]
+
+    :param user_id: ID by user. [int]
+
+    :return: response model HistoryPays.
+    """
+    try:
+        return history_payment_services.get_history_payment_by_fee_name_and_user_id(fee_name, user_id)
+    except HTTPException as ex:
+        log.exception(f"Error", exc_info=ex)
+        raise ex
+
+
+@app.get("/history_payments/user_id/{user_id}", response_model=Union[list[HistoryPays], list[Dict]],
          tags=["HistoryPayment"])
-async def get_history_payment_by_user_id(user_id: int):
+async def get_history_payment_by_user_id(user_id: int, dirs: bool = False):
     """
     Route for getting history_payment by HistoryPayID.
 
@@ -762,7 +804,7 @@ async def get_history_payment_by_user_id(user_id: int):
     :return: response model HistoryPays.
     """
     try:
-        return history_payment_services.get_history_payment_by_user_id(user_id)
+        return history_payment_services.get_history_payment_by_user_id(user_id, dirs)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -787,7 +829,7 @@ async def create_history_payment(history_payment: HistoryPays):
 
 @app.put("/history_payments/{history_payment_id}", response_model=Dict, tags=["HistoryPayment"],
          dependencies=[Depends(JWTBearer(access_level=1))])
-async def update_history_payment(history_payment_id: int, history_payment: HistoryPays):
+async def update_history_payment(history_payment_id: int, history_payment: Dict):
     """
     Route for updating an history_payment in basedata.
 

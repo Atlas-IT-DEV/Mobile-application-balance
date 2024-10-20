@@ -1,5 +1,6 @@
 from src.database.my_connector import db
 from src.database.models import Companies
+from typing import Dict
 
 
 def get_all_companies():
@@ -19,10 +20,12 @@ def create_company(company: Companies):
     return cursor.lastrowid
 
 
-def update_company(company_id: int, company: Companies):
-    query = "UPDATE companies SET name=%s, description=%s, contact=%s WHERE id=%s"
-    params = (company.Name, company.Desc, company.Contact, company_id)
-    db.execute_query(query, params)
+def update_company(company_id: int, company: Dict):
+    fields_to_update = [f"{key}=%s" for key in company.keys()]
+    params = list(company.values())
+    query = f"UPDATE companies SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(company_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_company(company_id: int):

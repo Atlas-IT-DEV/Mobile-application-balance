@@ -2,6 +2,7 @@ from src.repository import sub_category_repository
 from src.database.models import SubCategories
 from fastapi import HTTPException, status
 from src.utils.exam_services import check_for_duplicates, check_if_exists
+from typing import Dict
 
 
 def get_all_sub_categories():
@@ -27,12 +28,12 @@ def create_sub_category(sub_category: SubCategories):
     return get_sub_category_by_id(sub_category_id)
 
 
-def update_sub_category(sub_category_id: int, sub_category: SubCategories):
+def update_sub_category(sub_category_id: int, sub_category: Dict):
     check_for_duplicates(
         get_all=get_all_sub_categories,
         check_id=sub_category_id,
         attr_name="Type",
-        attr_value=sub_category.Type,
+        attr_value=sub_category.get("Type"),
         exception_detail='Sub category already exist'
     )
     sub_category_repository.update_sub_category(sub_category_id, sub_category)

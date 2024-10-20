@@ -1,5 +1,6 @@
 from src.database.my_connector import db
 from src.database.models import FeeCategories
+from typing import Dict
 
 
 def get_all_fee_categories():
@@ -19,10 +20,12 @@ def create_fee_category(fee_category: FeeCategories):
     return cursor.lastrowid
 
 
-def update_fee_category(fee_category_id: int, fee_category: FeeCategories):
-    query = "UPDATE fee_categories SET name=%s WHERE id=%s"
-    params = fee_category.Name, fee_category_id
-    db.execute_query(query, params)
+def update_fee_category(fee_category_id: int, fee_category: Dict):
+    fields_to_update = [f"{key}=%s" for key in fee_category.keys()]
+    params = list(fee_category.values())
+    query = f"UPDATE fee_categories SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(fee_category_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_fee_category(fee_category_id: int):

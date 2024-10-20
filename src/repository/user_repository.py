@@ -1,6 +1,7 @@
 from src.database.my_connector import Database
 from src.database.models import Users
 from src.database.my_connector import db
+from typing import Dict
 
 
 def get_all_users():
@@ -26,12 +27,12 @@ def create_user(user: Users):
     return cursor.lastrowid
 
 
-def update_user(user_id: int, user: Users):
-    query = ("UPDATE users SET first_name=%s, last_name=%s, phone=%s, INN=%s, password=%s,"
-             "data_register=%s, role=%s WHERE id=%s")
-    params = (user.FName, user.LName, user.Phone, user.INN, user.Password,
-              user.DateReg, user.Role, user_id)
-    db.execute_query(query, params)
+def update_user(user_id: int, user: Dict):
+    fields_to_update = [f"{key}=%s" for key in user.keys()]
+    params = list(user.values())
+    query = f"UPDATE users SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(user_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_user(user_id: int):

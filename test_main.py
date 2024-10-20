@@ -65,6 +65,7 @@ def generate_test_data(entity_type):
             "phone": generate_random_data("string"),
             "INN": generate_random_data("string"),
             "password": generate_random_data("string"),
+            "data_register": f"{generate_random_data('datetime')}",
             "role": "ADMIN"
         },
         "fee_category": {
@@ -216,6 +217,8 @@ def test_update_entity(entity_type, endpoint, update_data):
     response = api_request("PUT", f"/{endpoint}/{entity_id}", json_data=updated_data,
                            headers={"Authorization": f"Bearer {access_token}"})
     assert_response(response, 200)
+    if update_data.get("id"):
+        entity_id = update_data.get("id")
     teardown_entity(endpoint, entity_id, access_token)
 
 

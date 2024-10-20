@@ -95,7 +95,7 @@ class Users(BaseModel):
                                 alias="password",
                                 examples=["<PASSWORD>"])
     DateReg: Optional[datetime] = Field(datetime.now(),
-                                        alias="created_at",
+                                        alias="data_register",
                                         examples=[f"{datetime.now()}"])
     Role: Optional[RoleEnum] = Field(RoleEnum.user,
                                      alias="role",

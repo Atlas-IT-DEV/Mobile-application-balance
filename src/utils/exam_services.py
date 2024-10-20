@@ -1,6 +1,7 @@
 from typing import Callable, List, Any
 from fastapi import HTTPException, status
 from src.utils.custom_logging import setup_logging
+import inspect
 
 log = setup_logging()
 
@@ -12,14 +13,25 @@ def check_for_duplicates(
     attr_value: Any,
     exception_detail: str
 ):
-    existing_items = get_all()
-    for item in existing_items:
-        if int(item.ID) == int(check_id):
-            continue
-        if getattr(item, attr_name) == attr_value:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=exception_detail)
+    sig = inspect.signature(get_all)
+    if 'dirs' in sig.parameters:
+        existing_items = get_all(dirs=True)
+        for item in existing_items:
+            if int(item.get("id")) == int(check_id):
+                continue
+            if item.get(attr_name) == attr_value:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=exception_detail)
+    else:
+        existing_items = get_all()
+        for item in existing_items:
+            if int(item.ID) == int(check_id):
+                continue
+            if getattr(item, attr_name) == attr_value:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=exception_detail)
 
 
 def check_if_exists(
@@ -28,10 +40,20 @@ def check_if_exists(
     attr_value: Any,
     exception_detail: str
 ):
-    existing_items = get_all()
-    for item in existing_items:
-        if getattr(item, attr_name) == attr_value:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=exception_detail
-            )
+    sig = inspect.signature(get_all)
+    if 'dirs' in sig.parameters:
+        existing_items = get_all(dirs=True)
+        for item in existing_items:
+            if item.get(attr_name) == attr_value:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=exception_detail
+                )
+    else:
+        existing_items = get_all()
+        for item in existing_items:
+            if getattr(item, attr_name) == attr_value:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=exception_detail
+                )

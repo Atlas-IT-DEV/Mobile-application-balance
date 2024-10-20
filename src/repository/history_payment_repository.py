@@ -1,5 +1,6 @@
 from src.database.my_connector import db
 from src.database.models import HistoryPays
+from typing import Dict
 
 
 def get_all_history_payments():
@@ -24,11 +25,12 @@ def create_history_payment(history_payment: HistoryPays):
     return cursor.lastrowid
 
 
-def update_history_payment(history_payment_id: int, history_payment: HistoryPays):
-    query = "UPDATE history_payments SET user_id=%s, fee_id=%s, pay=%s, created_at=%s WHERE id=%s"
-    params = (history_payment.UserID, history_payment.FeeID, history_payment.Pay, history_payment.CreatedAt,
-              history_payment_id)
-    db.execute_query(query, params)
+def update_history_payment(history_payment_id: int, history_payment: Dict):
+    fields_to_update = [f"{key}=%s" for key in history_payment.keys()]
+    params = list(history_payment.values())
+    query = f"UPDATE history_payments SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(history_payment_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_history_payment(history_payment_id: int):

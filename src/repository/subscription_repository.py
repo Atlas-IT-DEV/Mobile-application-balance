@@ -1,5 +1,6 @@
 from src.database.my_connector import db
 from src.database.models import SubScripts
+from typing import Dict
 
 
 def get_all_subscriptions():
@@ -24,10 +25,12 @@ def create_subscription(subscription: SubScripts):
     return cursor.lastrowid
 
 
-def update_subscription(subscription_id: int, subscription: SubScripts):
-    query = "UPDATE subscriptions SET user_id=%s, fee_id=%s, type_sub_id=%s WHERE id=%s"
-    params = subscription.UserID, subscription.FeeID, subscription.TypeID, subscription_id
-    db.execute_query(query, params)
+def update_subscription(subscription_id: int, subscription: Dict):
+    fields_to_update = [f"{key}=%s" for key in subscription.keys()]
+    params = list(subscription.values())
+    query = f"UPDATE subscriptions SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(subscription_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_subscription(subscription_id: int):

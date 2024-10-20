@@ -2,6 +2,7 @@ from src.repository import company_repository
 from src.database.models import Companies
 from fastapi import HTTPException, status
 from src.utils.exam_services import check_for_duplicates, check_if_exists
+from typing import Dict
 
 
 def get_all_companies():
@@ -27,12 +28,12 @@ def create_company(company: Companies):
     return get_company_by_id(company_id)
 
 
-def update_company(company_id: int, company: Companies):
+def update_company(company_id: int, company: Dict):
     check_for_duplicates(
         get_all=get_all_companies,
         check_id=company_id,
         attr_name="Name",
-        attr_value=company.Name,
+        attr_value=company.get("Name"),
         exception_detail='Company already exist'
     )
     company_repository.update_company(company_id, company)

@@ -1,5 +1,6 @@
 from src.database.my_connector import db
 from src.database.models import SubCategories
+from typing import Dict
 
 
 def get_all_sub_categories():
@@ -19,10 +20,12 @@ def create_sub_category(sub_category: SubCategories):
     return cursor.lastrowid
 
 
-def update_sub_category(sub_category_id: int, sub_category: SubCategories):
-    query = "UPDATE sub_categories SET type=%s WHERE id=%s"
-    params = sub_category.Type, sub_category_id
-    db.execute_query(query, params)
+def update_sub_category(sub_category_id: int, sub_category: Dict):
+    fields_to_update = [f"{key}=%s" for key in sub_category.keys()]
+    params = list(sub_category.values())
+    query = f"UPDATE sub_categories SET {', '.join(fields_to_update)} WHERE id=%s"
+    params.append(sub_category_id)
+    db.execute_query(query, tuple(params))
 
 
 def delete_sub_category(sub_category_id: int):
