@@ -28,21 +28,20 @@ const ModalFund = ({ width = "" }) => {
 
   // modalVisible; checkButton; selectPeroid; selectTypeSum; sum
   const [data, setData] = useState([
-    false,
-    false,
-    [1, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    10,
+    false, //modal visible
+    [1, 0, 0], //select peroid
+    [0, 0, 0, 0, 0, 0], //select type sum
+    10, //sum
+    false, //checkButton
   ]);
 
   let copiedData = Array.from(data);
-  console.log(typeof copiedData[0]);
-
   return (
     <View>
       <TouchableOpacity
         style={[styles.button, styles.helpButton, { minWidth: `${width}` }]}
         onPress={() => {
+          copiedData[0] = true;
           setData(copiedData);
         }}
       >
@@ -52,17 +51,17 @@ const ModalFund = ({ width = "" }) => {
         <GestureRecognizer
           style={{ flex: 1 }}
           onSwipeUp={() => {
-            // copiedData[0] = true;
+            copiedData[0] = true;
             setData(copiedData);
           }}
           onSwipeDown={() => {
-            // copiedData[0] = false;
+            copiedData[0] = false;
             setData(copiedData);
           }}
         >
           <Modal
             animationType="slide"
-            // visible={copiedData[0]}
+            visible={copiedData[0]}
             presentationStyle="formSheet"
           >
             <View style={styles.swipeLine} />
@@ -75,20 +74,18 @@ const ModalFund = ({ width = "" }) => {
                   <View style={styles.periodRow}>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedData.selectPeriod = [1, 0, 0];
+                        copiedData[1] = [1, 0, 0];
                         setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
-                        data.selectPeriod[0] == 1
-                          ? styles.activePeriodButton
-                          : null,
+                        data[1][0] == 1 ? styles.activePeriodButton : null,
                       ]}
                     >
                       <Text
                         style={[
                           styles.periodButtonText,
-                          data.selectPeriod[0] == 1
+                          data[1][0] == 1
                             ? styles.activePeroidButtonText
                             : null,
                         ]}
@@ -98,20 +95,18 @@ const ModalFund = ({ width = "" }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedData.selectPeriod = [0, 1, 0];
+                        copiedData[1] = [0, 1, 0];
                         setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
-                        data.selectPeriod[1] == 1
-                          ? styles.activePeriodButton
-                          : null,
+                        data[1][1] == 1 ? styles.activePeriodButton : null,
                       ]}
                     >
                       <Text
                         style={[
                           styles.periodButtonText,
-                          data.selectPeriod[1] == 1
+                          data[1][1] == 1
                             ? styles.activePeroidButtonText
                             : null,
                         ]}
@@ -124,20 +119,18 @@ const ModalFund = ({ width = "" }) => {
                   <View style={styles.periodRow}>
                     <TouchableOpacity
                       onPress={() => {
-                        copiedData.selectPeriod = [0, 0, 1];
+                        copiedData[1] = [0, 0, 1];
                         setData(copiedData);
                       }}
                       style={[
                         styles.periodButton,
-                        data.selectPeriod[2] == 1
-                          ? styles.activePeriodButton
-                          : null,
+                        data[1][2] == 1 ? styles.activePeriodButton : null,
                       ]}
                     >
                       <Text
                         style={[
                           styles.periodButtonText,
-                          data.selectPeriod[2] == 1
+                          data[1][2] == 1
                             ? styles.activePeroidButtonText
                             : null,
                         ]}
@@ -155,10 +148,10 @@ const ModalFund = ({ width = "" }) => {
                     <TouchableOpacity
                       style={[styles.componentMoney, styles.minusSum]}
                       onPress={() => {
-                        copiedData.selectTypeSum = [1, 0, 0, 0, 0, 0];
-                        copiedData.sum == 10
-                          ? (copiedData.sum = 10)
-                          : (copiedData.sum = copiedData.sum - 10);
+                        copiedData[2] = [1, 0, 0, 0, 0, 0];
+                        copiedData[3] == 10
+                          ? (copiedData[3] = 10)
+                          : (copiedData[3] = copiedData[3] - 10);
                         setData(copiedData);
                       }}
                     >
@@ -168,16 +161,14 @@ const ModalFund = ({ width = "" }) => {
                       style={[
                         styles.componentMoney,
                         styles.sumView,
-                        data.selectTypeSum[0] == 1
-                          ? styles.activeSumView
-                          : null,
+                        data[2][0] == 1 ? styles.activeSumView : null,
                       ]}
                     >
                       <Text style={styles.sumViewText}>
-                        {data.sum} ₽
-                        {data.selectPeriod[0] == 1
+                        {data[3]} ₽
+                        {data[2][0] == 1
                           ? " в день"
-                          : data.selectPeriod[1] == 1
+                          : data[2][1] == 1
                           ? " в месяц"
                           : null}
                       </Text>
@@ -185,7 +176,7 @@ const ModalFund = ({ width = "" }) => {
                     <TouchableOpacity
                       style={[styles.componentMoney, styles.plusSum]}
                       onPress={() => {
-                        copiedData.sum = copiedData.sum + 10;
+                        copiedData[3] = copiedData[3] + 10;
                         setData(copiedData);
                       }}
                     >
@@ -197,20 +188,18 @@ const ModalFund = ({ width = "" }) => {
                       style={[
                         styles.componentMoney,
                         styles.autoSumButton,
-                        data.selectTypeSum[1] == 1
-                          ? styles.activeAutoSumButton
-                          : null,
+                        data[2][1] == 1 ? styles.activeAutoSumButton : null,
                       ]}
                       onPress={() => {
-                        copiedData.selectTypeSum = [0, 1, 0, 0, 0, 0];
-                        copiedData.sum = 200;
+                        copiedData[2] = [0, 1, 0, 0, 0, 0];
+                        copiedData[3] = 200;
                         setData(copiedData);
                       }}
                     >
                       <Text
                         style={[
                           styles.autoSumButtonText,
-                          data.selectTypeSum[1] == 1
+                          data[2][1] == 1
                             ? styles.activeAutoSumButtonText
                             : null,
                         ]}
@@ -222,20 +211,18 @@ const ModalFund = ({ width = "" }) => {
                       style={[
                         styles.componentMoney,
                         styles.autoSumButton,
-                        data.selectTypeSum[2] == 1
-                          ? styles.activeAutoSumButton
-                          : null,
+                        data[2][2] == 1 ? styles.activeAutoSumButton : null,
                       ]}
                       onPress={() => {
-                        copiedData.selectTypeSum = [0, 0, 1, 0, 0, 0];
-                        copiedData.sum = 400;
+                        copiedData[2] = [0, 0, 1, 0, 0, 0];
+                        copiedData[3] = 400;
                         setData(copiedData);
                       }}
                     >
                       <Text
                         style={[
                           styles.autoSumButtonText,
-                          data.selectTypeSum[2] == 1
+                          data[2][2] == 1
                             ? styles.activeAutoSumButtonText
                             : null,
                         ]}
@@ -247,20 +234,18 @@ const ModalFund = ({ width = "" }) => {
                       style={[
                         styles.componentMoney,
                         styles.autoSumButton,
-                        data.selectTypeSum[3] == 1
-                          ? styles.activeAutoSumButton
-                          : null,
+                        data[2][3] == 1 ? styles.activeAutoSumButton : null,
                       ]}
                       onPress={() => {
-                        copiedData.selectTypeSum = [0, 0, 0, 1, 0, 0];
-                        copiedData.sum = 900;
+                        copiedData[2] = [0, 0, 0, 1, 0, 0];
+                        copiedData[3] = 900;
                         setData(copiedData);
                       }}
                     >
                       <Text
                         style={[
                           styles.autoSumButtonText,
-                          data.selectTypeSum[3] == 1
+                          data[2][3] == 1
                             ? styles.activeAutoSumButtonText
                             : null,
                         ]}
@@ -272,20 +257,18 @@ const ModalFund = ({ width = "" }) => {
                       style={[
                         styles.componentMoney,
                         styles.autoSumButton,
-                        data.selectTypeSum[4] == 1
-                          ? styles.activeAutoSumButton
-                          : null,
+                        data[2][4] == 1 ? styles.activeAutoSumButton : null,
                       ]}
                       onPress={() => {
-                        copiedData.selectTypeSum = [0, 0, 0, 0, 1, 0];
-                        copiedData.sum = 1000;
+                        copiedData[2] = [0, 0, 0, 0, 1, 0];
+                        copiedData[3] = 1000;
                         setData(copiedData);
                       }}
                     >
                       <Text
                         style={[
                           styles.autoSumButtonText,
-                          data.selectTypeSum[4] == 1
+                          data[2][4] == 1
                             ? styles.activeAutoSumButtonText
                             : null,
                         ]}
@@ -297,15 +280,13 @@ const ModalFund = ({ width = "" }) => {
                   <View
                     style={[
                       styles.inputSelect,
-                      data.selectTypeSum[5] == 1
-                        ? styles.activeInputSelect
-                        : null,
+                      data[2][5] == 1 ? styles.activeInputSelect : null,
                     ]}
                   >
                     <View style={styles.componentMoney}>
                       <TextInput
                         onPress={() => {
-                          copiedData.selectTypeSum = [0, 0, 0, 0, 0, 1];
+                          copiedData[2] = [0, 0, 0, 0, 0, 1];
                           setData(copiedData);
                         }}
                         placeholder="Ваша сумма"
@@ -313,7 +294,7 @@ const ModalFund = ({ width = "" }) => {
                         keyboardType="number-pad"
                         style={styles.inputSum}
                         onChange={(textInput) => {
-                          copiedData.sum = textInput.nativeEvent.text;
+                          copiedData[3] = textInput.nativeEvent.text;
                           setData(copiedData);
                         }}
                       />
@@ -329,17 +310,17 @@ const ModalFund = ({ width = "" }) => {
                         <Text style={styles.payInfoAtrribute}>
                           Сумма платежа
                         </Text>
-                        <Text style={styles.payInfoValue}>{data.sum} ₽</Text>
+                        <Text style={styles.payInfoValue}>{data[3]} ₽</Text>
                       </View>
                       <View style={styles.divideLine} />
                       <View style={styles.payInfoRow}>
                         <Text style={styles.payInfoAtrribute}>Вид платежа</Text>
                         <Text style={styles.payInfoValue}>
-                          {data.selectPeriod[0] == 1
+                          {data[1][0] == 1
                             ? "Каждый день"
-                            : data.selectPeriod[1] == 1
+                            : data[1][1] == 1
                             ? "Каждый месяц"
-                            : data.selectPeriod[2] == 1
+                            : data[1][2] == 1
                             ? "Разовый платеж"
                             : ""}
                         </Text>
@@ -351,9 +332,9 @@ const ModalFund = ({ width = "" }) => {
 
                     <View style={styles.agreeView}>
                       <CheckBox
-                        isChecked={copiedData.checkButton}
+                        isChecked={copiedData[4]}
                         onClick={() => {
-                          copiedData.checkButton = !copiedData.checkButton;
+                          copiedData[4] = !copiedData[4];
                           setData(copiedData);
                         }}
                       />
