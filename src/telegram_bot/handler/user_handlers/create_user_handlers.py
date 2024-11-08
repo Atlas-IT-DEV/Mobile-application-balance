@@ -13,17 +13,21 @@ class CreateUserHandler(BaseCommandHandler):
 
     FORMA = ("<pre>"
              "/create_user\n"
-             "name=Имя\n"
-             "telegram_id=ID\n"
+             "first_name=Имя\n"
+             "last_name=Фамилия\n"
              "phone=Номер телефона\n"
-             "count_bonus=Количество бонусов пользователя\n"
-             "referal=Пригласил ли пользователь друга? (True/False)"
+             "passworsd=Пароль\n"
+             "data_register=Дата регистрации\n"
+             "INN=ИНН\n"
+             "role=Роль\n"
              "</pre>\n\n"
-             "<code>Name необязательный</code>\n"
-             "<code>TelegramID обязательный</code>\n"
-             "<code>Phone обязательный</code>\n"
-             "<code>CountBonus необязательный</code>\n"
-             "<code>Referal необязательный</code>\n\n")
+             "<code>Имя обязательный</code>\n"
+             "<code>Фамилия обязательный</code>\n"
+             "<code>Номер телефона обязательный</code>\n"
+             "<code>Пароль обязательный</code>\n"
+             "<code>Дата регистрации необязательный</code>\n"
+             "<code>ИНН необязательный</code>\n"
+             "<code>Роль необязательный</code>\n")
 
     async def start(self, update: Update, context: CallbackContext) -> int:
         log.info("Command create_user")
@@ -58,11 +62,13 @@ class CreateUserHandler(BaseCommandHandler):
                 return self.CHOOSING
 
             self.DATA[user_id] = _get_param(text, {
-                "name": "str",
-                "telegram_id": "int",
+                "first_name": "str",
+                "last_name": "str",
                 "phone": "str",
-                "count_bonus": "int",
-                "referal": "bool"
+                "password": "str",
+                "data_register": "date",
+                "INN": "str",
+                "role": "str"
             })
 
             if user_id in self.DATA:
@@ -70,6 +76,8 @@ class CreateUserHandler(BaseCommandHandler):
 
                 # Преобразуем данные в формат, соответствующий Pydantic модели
                 user_data = User(**self.DATA[user_id]).dict(by_alias=True)
+
+                user_data["data_register"] = f"{user_data['data_register']}"
 
                 response = requests.post(
                     f'http://{self.HOST}:{self.SERVER_PORT}/users/',

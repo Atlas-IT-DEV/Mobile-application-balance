@@ -14,18 +14,21 @@ class EditUserHandler(BaseCommandHandler):
     FORMA = ("<pre>"
              "/edit_user\n"
              "user_id=ID\n"
-             "name=Имя\n"
-             "telegram_id=ID\n"
+             "first_name=Имя\n"
+             "last_name=Фамилия\n"
              "phone=Номер телефона\n"
-             "count_bonus=Количество бонусов пользователя\n"
-             "referal=Пригласил ли пользователь друга? (True/False)"
+             "passworsd=Пароль\n"
+             "data_register=Дата регистрации\n"
+             "INN=ИНН\n"
+             "role=Роль\n"
              "</pre>\n\n"
-             "<code>UserID обязательный</code>\n"
-             "<code>Name необязательный</code>\n"
-             "<code>TelegramID обязательный</code>\n"
-             "<code>Phone необязательный</code>\n"
-             "<code>CountBonus необязательный</code>\n"
-             "<code>Referal необязательный</code>\n\n")
+             "<code>Имя обязательный</code>\n"
+             "<code>Фамилия обязательный</code>\n"
+             "<code>Номер телефона обязательный</code>\n"
+             "<code>Пароль обязательный</code>\n"
+             "<code>Дата регистрации необязательный</code>\n"
+             "<code>ИНН необязательный</code>\n"
+             "<code>Роль необязательный</code>\n")
 
     async def start(self, update: Update, context: CallbackContext) -> int:
         log.info("Command edit_user")
@@ -61,11 +64,13 @@ class EditUserHandler(BaseCommandHandler):
 
             self.DATA[user_id] = _get_param(text, {
                 "user_id": "int",
-                "name": "str",
-                "telegram_id": "int",
+                "first_name": "str",
+                "last_name": "str",
                 "phone": "str",
-                "count_bonus": "int",
-                "referal": "bool"
+                "password": "str",
+                "data_register": "date",
+                "INN": "str",
+                "role": "str"
             })
 
             if self.DATA[user_id]:
@@ -77,12 +82,16 @@ class EditUserHandler(BaseCommandHandler):
                 user = User(**user.json()).dict(by_alias=True)
 
                 user_data = {
-                    "name": self.DATA.get(user_id, {}).get("name", user.get("name")),
-                    "telegram_id": self.DATA.get(user_id, {}).get("telegram_id", user.get("telegram_id")),
+                    "first_name": self.DATA.get(user_id, {}).get("first_name", user.get("first_name")),
+                    "last_name": self.DATA.get(user_id, {}).get("last_name", user.get("last_name")),
                     "phone": self.DATA.get(user_id, {}).get("phone", user.get("phone")),
-                    "count_bonus": self.DATA.get(user_id, {}).get("count_bonus", user.get("count_bonus")),
-                    "referal": self.DATA.get(user_id, {}).get("referal", user.get("referal")),
+                    "password": self.DATA.get(user_id, {}).get("password", user.get("password")),
+                    "data_registr": self.DATA.get(user_id, {}).get("data_registr", user.get("data_registr")),
+                    "INN": self.DATA.get(user_id, {}).get("INN", user.get("INN")),
+                    "role": self.DATA.get(user_id, {}).get("role", user.get("role")),
                 }
+
+                user_data['data_registr'] = f"{user_data['data_registr']}"
 
                 response = requests.put(
                     f'http://{self.HOST}:{self.SERVER_PORT}/users/{self.DATA[user_id]["user_id"]}',
