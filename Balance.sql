@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `fees` (
   `final_cost` decimal(10,2) NOT NULL,
   `gathered_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_finish` timestamp NULL DEFAULT NULL,
   `fee_category_id` int(11) NOT NULL,
   `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -67,11 +68,11 @@ CREATE TABLE IF NOT EXISTS `fees` (
 --
 
 INSERT IGNORE INTO `fees` (`id`, `name`, `description`, `final_cost`, `gathered_cost`, `created_at`, `fee_category_id`, `image_url`) VALUES
-(1, 'Tech Conference', 'Annual tech conference 2024', '150000.00', '50000.00', '2024-09-08 14:00:00', 1, 'http://example.png'),
-(2, 'Green Energy Forum', 'Sustainable energy event', '300000.00', '150000.00', '2024-09-08 14:15:00', 2, 'http://example.png'),
-(3, 'Food Fair', 'Gourmet food exhibition', '100000.00', '60000.00', '2024-09-08 14:30:00', 3, 'http://example.png'),
-(4, 'Media Summit', 'Media industry networking', '250000.00', '100000.00', '2024-09-08 14:45:00', 4, 'http://example.png'),
-(5, 'Health Expo', 'Healthcare innovations', '500000.00', '200000.00', '2024-09-08 15:00:00', 5, 'http://example.png');
+(1, 'Tech Conference', 'Annual tech conference 2024', '150000.00', '50000.00', '2024-09-08 14:00:00', 1, '/public/fee/one.jpg'),
+(2, 'Green Energy Forum', 'Sustainable energy event', '300000.00', '150000.00', '2024-09-08 14:15:00', 2, '/public/fee/two.jpg'),
+(3, 'Food Fair', 'Gourmet food exhibition', '100000.00', '60000.00', '2024-09-08 14:30:00', 3, '/public/fee/three.jpg'),
+(4, 'Media Summit', 'Media industry networking', '250000.00', '100000.00', '2024-09-08 14:45:00', 4, '/public/fee/four.jpg'),
+(5, 'Health Expo', 'Healthcare innovations', '500000.00', '200000.00', '2024-09-08 15:00:00', 5, '/public/fee/five.jpg');
 
 -- --------------------------------------------------------
 
@@ -186,11 +187,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Дамп данных таблицы `users` с красивыми и реалистичными значениями
 INSERT IGNORE INTO `users` (`id`, `first_name`, `last_name`, `phone`, `INN`, `password`, `data_register`, `role`) VALUES
-(1, 'John', 'Doe', '+7-903-123-4567', '7707083893', '$2y$10$Nm7B9uWsPgUm0UXDdy1S5uyp9/lnOqqrCkU7XMg9eGnb1G4EQWpXa', '2024-09-08 14:00:00', 'USER'),
-(2, 'Jane', 'Smith', '+7-495-987-6543', '7705012397', '$2y$10$Nm7B9uWsPgUm0UXDdy1S5uyp9/lnOqqrCkU7XMg9eGnb1G4EQWpXa', '2024-09-08 14:05:00', 'ADMIN'),
-(3, 'Alexander', 'Ivanov', '+7-905-334-2211', '7730023447', '$2y$10$Nm7B9uWsPgUm0UXDdy1S5uyp9/lnOqqrCkU7XMg9eGnb1G4EQWpXa', '2024-09-08 14:10:00', 'USER'),
-(4, 'Maria', 'Petrova', '+7-499-443-3322', '7732124451', '$2y$10$Nm7B9uWsPgUm0UXDdy1S5uyp9/lnOqqrCkU7XMg9eGnb1G4EQWpXa', '2024-09-08 14:15:00', 'USER'),
-(5, 'Oleg', 'Sidorov', '+7-926-556-6677', '7740015528', '$2y$10$4Em7G6pM9GjKEFfB9IxbhebTATLF6cx3dTjOjphLP9mFIZkdketYq', '2024-09-08 14:20:00', 'ADMIN');
+(1, 'John', 'Doe', '+7-903-123-4567', '7707083893', '$2y$10$e0.1fO/fkI.kVl5', '2024-09-08 14:00:00', 'USER'),
+(2, 'Jane', 'Smith', '+7-495-987-6543', '7705012397', '$2y$10$wJhP0qfO67jkf9', '2024-09-08 14:05:00', 'ADMIN'),
+(3, 'Alexander', 'Ivanov', '+7-905-334-2211', '7730023447', '$2y$10$Dgk.V83JHiGk58', '2024-09-08 14:10:00', 'USER'),
+(4, 'Maria', 'Petrova', '+7-499-443-3322', '7732124451', '$2y$10$pF6hD84LKxGmiO', '2024-09-08 14:15:00', 'USER'),
+(5, 'Oleg', 'Sidorov', '+7-926-556-6677', '7740015528', '$2y$10$2aQnWmRTx3HNhX', '2024-09-08 14:20:00', 'ADMIN');
 
 --
 -- Индексы сохранённых таблиц

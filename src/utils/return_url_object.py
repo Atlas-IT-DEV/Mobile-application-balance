@@ -4,5 +4,5 @@ config = Config()
 
 
 def return_url_object(url: str) -> str:
-    return (f"http://{config.__getattr__('HOST')}:{config.__getattr__('SERVER_PORT')}/"
+    return (f"https://{config.__getattr__('HOST')}:{config.__getattr__('SERVER_PORT')}/"
             f"public{url}")

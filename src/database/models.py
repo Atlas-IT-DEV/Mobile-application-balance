@@ -1,4 +1,4 @@
-from pydantic import (BaseModel, Field, StrictStr, Json, condecimal,
+from pydantic import (BaseModel, Field, StrictStr, Json, condecimal, StrictFloat,
                       StrictInt, PrivateAttr, SecretBytes, StrictBytes, StrictBool, root_validator)
 from pydantic_settings import BaseSettings
 from enum import Enum
@@ -136,15 +136,18 @@ class Fees(BaseModel):
     Desc: Optional[StrictStr] = Field(None,
                                       alias="description",
                                       examples=["Семья состоит из 3 человек"])
-    FCost: condecimal(max_digits=10, decimal_places=2) = Field(...,
-                                                               alias="final_cost",
-                                                               examples=["100000"])
-    GCost: condecimal(max_digits=10, decimal_places=2) = Field(0,
-                                                               alias="gathered_cost",
-                                                               examples=["5000"])
+    FCost: StrictFloat = Field(...,
+                               alias="final_cost",
+                               examples=[100000.00])
+    GCost: StrictFloat = Field(0.00,
+                               alias="gathered_cost",
+                               examples=[5000.00])
     CreatedAt: Optional[datetime] = Field(datetime.now(),
                                           alias="created_at",
                                           examples=[f"{datetime.now()}"])
+    DateFinish: Optional[datetime] = Field(datetime.now(),
+                                           alias="date_finish",
+                                           examples=[f"{datetime.now()}"])
     FeeCategoryID: StrictInt = Field(...,
                                      alias="fee_category_id",
                                      examples=[3])
@@ -199,9 +202,9 @@ class HistoryPays(BaseModel):
     FeeID: StrictInt = Field(...,
                              alias="fee_id",
                              examples=[3])
-    Pay: condecimal(max_digits=10, decimal_places=2) = Field(...,
-                                                             alias="pay",
-                                                             examples=[1000])
+    Pay: StrictFloat = Field(...,
+                             alias="pay",
+                             examples=[1000.00])
     CreatedAt: Optional[datetime] = Field(datetime.now(),
                                           alias="created_at",
                                           examples=[f"{datetime.now()}"])

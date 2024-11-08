@@ -6,6 +6,10 @@ from datetime import datetime, timedelta
 from src.utils.token import (encode_jwt, decode_jwt, create_jwt,
                              create_access_token, create_refresh_token, validate_token_type)
 from typing import Dict
+from src.utils.custom_logging import setup_logging
+
+
+log = setup_logging()
 
 
 def validate_auth_user(auth: Auth):
@@ -26,7 +30,7 @@ def validate_reg_user(user: Users):
 
 
 def get_user_by_payload(payload):
-    user_id = payload.get("sub")
+    user_id = payload.get("user_id")
     user = user_services.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")

@@ -3,6 +3,11 @@ from src.database.models import SubScripts
 from typing import Dict
 
 
+def get_all_subscriptions_by_fee_id(fee_id):
+    query = "SELECT * FROM subscriptions WHERE fee_id=%s"
+    return db.fetch_all(query, (fee_id,))
+
+
 def get_all_subscriptions():
     query = "SELECT * FROM subscriptions"
     return db.fetch_all(query)

@@ -14,6 +14,7 @@ from jwt import InvalidTokenError
 from src.utils.custom_logging import setup_logging
 from config import Config
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime, timedelta
 
 config = Config()
 log = setup_logging()
@@ -87,7 +88,7 @@ async def signin(user: Users = Depends(auth_services.validate_auth_user)):
 
 
 @app.post("/auth_refresh_jwt/", response_model=TokenInfo, response_model_exclude_none=True,
-          dependencies=[Depends(JWTBearer(access_level=1))], tags=["Auth"])
+          dependencies=[Depends(JWTBearer(access_level=0))], tags=["Auth"])
 async def auth_refresh_jwt(user: Users = Depends(auth_services.UserGetFromToken("refresh_token_type"))):
     """
     Route for refresh jwt access token.
@@ -103,7 +104,7 @@ async def auth_refresh_jwt(user: Users = Depends(auth_services.UserGetFromToken(
         raise ex
 
 
-@app.get("/get_current_auth_user/", response_model=Users, dependencies=[Depends(JWTBearer(access_level=1))],
+@app.get("/get_current_auth_user/", response_model=Users, dependencies=[Depends(JWTBearer(access_level=0))],
          tags=["Auth"])
 async def get_current_auth_user(user: Users = Depends(auth_services.UserGetFromToken("access_token_type"))):
     """
@@ -121,7 +122,7 @@ async def get_current_auth_user(user: Users = Depends(auth_services.UserGetFromT
 
 
 @app.post("/image_upload/fee", response_model=Fees, tags=["ImageService"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def image_upload_fee(file: UploadFile = File(...), fee_id: int = Form(...)):
     """
    Route for uploading multiple images for a fee.
@@ -140,8 +141,8 @@ async def image_upload_fee(file: UploadFile = File(...), fee_id: int = Form(...)
         raise ex
 
 
-@app.delete("/image_delete/fee", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/image_delete/fee", response_model=Dict, tags=["ImageService"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def image_delete_fee(fee_id: int):
     """
    Route for delete fee into basedata.
@@ -205,7 +206,7 @@ async def get_user_by_phone(phone: str):
 
 
 @app.post("/users/", response_model=Users, tags=["User"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_user(user: Users):
     """
     Route for create user in basedata.
@@ -222,7 +223,7 @@ async def create_user(user: Users):
 
 
 @app.put("/users/{user_id}", response_model=Dict, tags=["User"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_user(user_id, user: Dict):
     """
     Route for update user in basedata.
@@ -240,8 +241,8 @@ async def update_user(user_id, user: Dict):
         raise ex
 
 
-@app.delete("/users/{user_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/users/{user_id}", response_model=Dict, tags=["User"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_user(user_id):
     """
     Route for delete user in basedata.
@@ -310,8 +311,8 @@ async def get_fee_by_name(fee_name: str, dirs: bool = False):
 
 
 @app.post("/fees/", response_model=Fees, tags=["Fee"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
-async def create_fee(fee: Fees):
+          dependencies=[Depends(JWTBearer(access_level=0))])
+async def create_fee(fee: Fees, duration: int = None):
     """
     Route for creating a fee in basedata.
 
@@ -320,6 +321,10 @@ async def create_fee(fee: Fees):
     :return: response model Fees.
     """
     try:
+        if duration is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Duration is required")
+        fee.DateFinish = fee.CreatedAt + timedelta(days=duration)
         return fee_services.create_fee(fee)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
@@ -327,7 +332,7 @@ async def create_fee(fee: Fees):
 
 
 @app.put("/fees/{fee_id}", response_model=Dict, tags=["Fee"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_fee(fee_id: int, fee: Dict):
     """
     Route for updating a fee in basedata.
@@ -345,8 +350,8 @@ async def update_fee(fee_id: int, fee: Dict):
         raise ex
 
 
-@app.delete("/fees/{fee_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/fees/{fee_id}", response_model=Dict, tags=["Fee"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_fee(fee_id: int):
     """
     Route for deleting a fee from basedata.
@@ -409,7 +414,7 @@ async def get_fee_category_by_id(fee_category_id: int):
 
 
 @app.post("/fee_categories/", response_model=FeeCategories, tags=["FeeCategory"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_fee_category(fee_category: FeeCategories):
     """
     Route for create fee_category in basedata.
@@ -426,7 +431,7 @@ async def create_fee_category(fee_category: FeeCategories):
 
 
 @app.put("/fee_categories/{fee_category_id}", response_model=Dict, tags=["FeeCategory"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_fee_category(fee_category_id, fee_category: Dict):
     """
     Route for update fee_category in basedata.
@@ -444,8 +449,8 @@ async def update_fee_category(fee_category_id, fee_category: Dict):
         raise ex
 
 
-@app.delete("/fee_categories/{fee_category_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/fee_categories/{fee_category_id}", response_model=Dict, tags=["FeeCategory"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_fee_category(fee_category_id):
     """
     Route for delete fee_category from basedata.
@@ -492,7 +497,7 @@ async def get_sub_category_by_id(sub_category_id: int):
 
 
 @app.post("/sub_categories/", response_model=SubCategories, tags=["SubCategory"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_sub_category(sub_category: SubCategories):
     """
     Route for create sub_category in basedata.
@@ -509,7 +514,7 @@ async def create_sub_category(sub_category: SubCategories):
 
 
 @app.put("/sub_categories/{sub_category_id}", response_model=Dict, tags=["SubCategory"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_sub_category(sub_category_id, sub_category: Dict):
     """
     Route for update sub_category in basedata.
@@ -527,8 +532,8 @@ async def update_sub_category(sub_category_id, sub_category: Dict):
         raise ex
 
 
-@app.delete("/sub_categories/{sub_category_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/sub_categories/{sub_category_id}", response_model=Dict, tags=["SubCategory"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_sub_category(sub_category_id):
     """
     Route for delete sub_category from basedata.
@@ -575,7 +580,7 @@ async def get_company_by_id(company_id: int):
 
 
 @app.post("/companies/", response_model=Companies, tags=["Company"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_company(company: Companies):
     """
     Route for create company in basedata.
@@ -592,7 +597,7 @@ async def create_company(company: Companies):
 
 
 @app.put("/companies/{company_id}", response_model=Dict, tags=["Company"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_company(company_id, company: Dict):
     """
     Route for update company in basedata.
@@ -610,8 +615,8 @@ async def update_company(company_id, company: Dict):
         raise ex
 
 
-@app.delete("/companies/{company_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/companies/{company_id}", response_model=Dict, tags=["Company"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_company(company_id):
     """
     Route for delete company from basedata.
@@ -622,6 +627,20 @@ async def delete_company(company_id):
     """
     try:
         return company_services.delete_company(company_id)
+    except HTTPException as ex:
+        log.exception(f"Error", exc_info=ex)
+        raise ex
+
+
+@app.get("/subscriptions/fee_id/{fee_id}", response_model=list[Users], tags=["Subscription"])
+async def get_all_subscriptions_by_fee_id(fee_id):
+    """
+    Route for getting all subscriptions by fee id from basedata.
+
+    :return: response model List[Users].
+    """
+    try:
+        return subscription_services.get_all_subscriptions_by_fee_id(fee_id)
     except HTTPException as ex:
         log.exception(f"Error", exc_info=ex)
         raise ex
@@ -676,7 +695,7 @@ async def get_subscription_by_user_id(user_id: int, dirs: bool = False):
 
 
 @app.post("/subscriptions/", response_model=SubScripts, tags=["Subscription"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_subscription(subscription: SubScripts):
     """
     Route for creating an subscription in basedata.
@@ -693,7 +712,7 @@ async def create_subscription(subscription: SubScripts):
 
 
 @app.put("/subscriptions/{subscription_id}", response_model=Dict, tags=["Subscription"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_subscription(subscription_id: int, subscription: Dict):
     """
     Route for updating an subscription in basedata.
@@ -711,8 +730,8 @@ async def update_subscription(subscription_id: int, subscription: Dict):
         raise ex
 
 
-@app.delete("/subscriptions/{subscription_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/subscriptions/{subscription_id}", response_model=Dict, tags=["Subscription"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_subscription(subscription_id: int):
     """
     Route for deleting an subscription from basedata.
@@ -811,7 +830,7 @@ async def get_history_payment_by_user_id(user_id: int, dirs: bool = False):
 
 
 @app.post("/history_payments/", response_model=HistoryPays, tags=["HistoryPayment"],
-          dependencies=[Depends(JWTBearer(access_level=1))])
+          dependencies=[Depends(JWTBearer(access_level=0))])
 async def create_history_payment(history_payment: HistoryPays):
     """
     Route for creating an history_payment in basedata.
@@ -828,7 +847,7 @@ async def create_history_payment(history_payment: HistoryPays):
 
 
 @app.put("/history_payments/{history_payment_id}", response_model=Dict, tags=["HistoryPayment"],
-         dependencies=[Depends(JWTBearer(access_level=1))])
+         dependencies=[Depends(JWTBearer(access_level=0))])
 async def update_history_payment(history_payment_id: int, history_payment: Dict):
     """
     Route for updating an history_payment in basedata.
@@ -846,8 +865,8 @@ async def update_history_payment(history_payment_id: int, history_payment: Dict)
         raise ex
 
 
-@app.delete("/history_payments/{history_payment_id}", response_model=Dict, tags=None,
-            dependencies=[Depends(JWTBearer(access_level=1))])
+@app.delete("/history_payments/{history_payment_id}", response_model=Dict, tags=["HistoryPayment"],
+            dependencies=[Depends(JWTBearer(access_level=0))])
 async def delete_history_payment(history_payment_id: int):
     """
     Route for deleting an history payment from basedata.
@@ -895,7 +914,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/product_comments/", response_model=ProductComments, tags=["ProductComment"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_product_comment(product_comment: ProductComments):
 #     """
 #     Route for creating an order comment in basedata.
@@ -912,7 +931,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/product_comments/{product_comment_id}", response_model=Dict, tags=["ProductComment"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_product_comment(product_comment_id: int, product_comment: ProductComments):
 #     """
 #     Route for updating an order comment in basedata.
@@ -931,7 +950,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/product_comments/{product_comment_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_product_comment(product_comment_id: int):
 #     """
 #     Route for deleting an product comment from basedata.
@@ -979,7 +998,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/company_comments/", response_model=CompanyComments, tags=["CompanyComment"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_company_comment(company_comment: CompanyComments):
 #     """
 #     Route for creating an company comment in basedata.
@@ -996,7 +1015,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/company_comments/{company_comment_id}", response_model=Dict, tags=["CompanyComment"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_company_comment(company_comment_id: int, company_comment: CompanyComments):
 #     """
 #     Route for updating an company comment in basedata.
@@ -1015,7 +1034,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/company_comments/{company_comment_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_company_comment(company_comment_id: int):
 #     """
 #     Route for deleting an company comment from basedata.
@@ -1064,7 +1083,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/product_characteristics/", response_model=ProductCharacteristics, tags=["ProductCharacteristic"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_product_characteristic(product_characteristic: ProductCharacteristics):
 #     """
 #     Route for creating an product characteristic in basedata.
@@ -1081,7 +1100,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/product_characteristics/{product_characteristic_id}", response_model=Dict, tags=["ProductCharacteristic"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_product_characteristic(product_characteristic_id: int, product_characteristic: ProductCharacteristics):
 #     """
 #     Route for updating an product characteristic in basedata.
@@ -1101,7 +1120,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/product_characteristics/{product_characteristic_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_product_characteristic(product_characteristic_id: int):
 #     """
 #     Route for deleting an product characteristic from basedata.
@@ -1148,7 +1167,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/receipts/", response_model=Receipts, tags=["Receipt"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_receipt(receipt: Receipts):
 #     """
 #     Route for create receipt in basedata.
@@ -1165,7 +1184,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/receipts/{receipt_id}", response_model=Dict, tags=["Receipt"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_receipt(receipt_id, receipt: Receipts):
 #     """
 #     Route for update receipt in basedata.
@@ -1184,7 +1203,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/receipts/{receipt_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_receipt(receipt_id):
 #     """
 #     Route for delete receipt in basedata.
@@ -1231,7 +1250,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/write_offs/", response_model=WriteOffs, tags=["WriteOff"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_write_off(write_off: WriteOffs):
 #     """
 #     Route for create write off in basedata.
@@ -1248,7 +1267,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/write_offs/{write_off_id}", response_model=Dict, tags=["WriteOff"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_write_off(write_off_id, write_off: WriteOffs):
 #     """
 #     Route for update write off in basedata.
@@ -1267,7 +1286,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/write_offs/{write_off_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_write_off(write_off_id):
 #     """
 #     Route for delete write_off in basedata.
@@ -1315,7 +1334,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.post("/question_answers/", response_model=QuestionAnswers, tags=["QuestionAnswer"],
-#           dependencies=[Depends(JWTBearer(access_level=1))])
+#           dependencies=[Depends(JWTBearer(access_level=0))])
 # async def create_question_answer(question_answer: QuestionAnswers):
 #     """
 #     Route for create question_answer in basedata.
@@ -1332,7 +1351,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.put("/question_answers/{question_answer_id}", response_model=Dict, tags=["QuestionAnswer"],
-#          dependencies=[Depends(JWTBearer(access_level=1))])
+#          dependencies=[Depends(JWTBearer(access_level=0))])
 # async def update_question_answer(question_answer_id, question_answer: QuestionAnswers):
 #     """
 #     Route for update write off in basedata.
@@ -1351,7 +1370,7 @@ async def delete_history_payment(history_payment_id: int):
 #
 #
 # @app.delete("/question_answers/{question_answer_id}", response_model=Dict, tags=None,
-#             dependencies=[Depends(JWTBearer(access_level=1))])
+#             dependencies=[Depends(JWTBearer(access_level=0))])
 # async def delete_question_answer(question_answer_id):
 #     """
 #     Route for delete question_answer in basedata.
@@ -1371,22 +1390,41 @@ def run_server():
     import logging
     import uvicorn
     import yaml
-    uvicorn_log_config = 'logging.yaml'
+    uvicorn_log_config = './logging.yaml'
     with open(uvicorn_log_config, 'r') as f:
         uvicorn_config = yaml.safe_load(f.read())
         logging.config.dictConfig(uvicorn_config)
+    if config.__getattr__("DEBUG") == "TRUE":
+        reload = True
+    elif config.__getattr__("DEBUG") == "FALSE":
+        reload = False
+    else:
+        raise Exception("Not init debug mode in env file")
     uvicorn.run("main:app", host=config.__getattr__("HOST"), port=int(config.__getattr__("SERVER_PORT")),
-                reload=True, log_config=uvicorn_log_config)
+                log_config=uvicorn_log_config, reload=reload)
+
+
+def run_bot():
+    from src.telegram_bot.main import BalanceBot
+    bot = BalanceBot()
+    bot.start_bot()
 
 
 if __name__ == "__main__":
     # Создание датабазы и таблиц, если они не существуют
-    log.info("Start create/update database")
-    from create_sql import CreateSQL
 
-    create_sql = CreateSQL()
-    create_sql.read_sql()
+    if config.__getattr__("DEBUG") == "TRUE":
+        from create_sql import CreateSQL
+        create_sql = CreateSQL()
+        create_sql.read_sql()
 
     # Запуск сервера и бота
-    log.info("Start run server")
-    run_server()
+    log.info("Start run server and bot")
+    import multiprocessing
+
+    server_process = multiprocessing.Process(target=run_server)
+    server_process.start()
+    bot_process = multiprocessing.Process(target=run_bot)
+    bot_process.start()
+    server_process.join()
+    bot_process.join()

@@ -29,9 +29,9 @@ def get_fee_by_name(fee_name: str):
 
 def create_fee(fee: Fees):
     query = ("INSERT INTO fees (name, description, final_cost, gathered_cost,"
-             " created_at, fee_category_id, image_url)"
-             " VALUES (%s, %s, %s, %s, %s, %s, %s)")
-    params = (fee.Name, fee.Desc, fee.FCost, fee.GCost, fee.CreatedAt,
+             " created_at, date_finish, fee_category_id, image_url)"
+             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+    params = (fee.Name, fee.Desc, fee.FCost, fee.GCost, fee.CreatedAt, fee.DateFinish,
               fee.FeeCategoryID, fee.ImageUrl)
     cursor = db.execute_query(query, params)
     return cursor.lastrowid

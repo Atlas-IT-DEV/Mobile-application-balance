@@ -9,6 +9,15 @@ from typing import Dict
 from src.utils.transform_field import transform_field
 
 
+def get_all_subscriptions_by_fee_id(fee_id):
+    subscriptions = subscription_repository.get_all_subscriptions_by_fee_id(fee_id)
+    user_ids = [subscription.get("user_id") for subscription in subscriptions]
+    users = []
+    for user_id in user_ids:
+        user = get_user_by_id(user_id)
+        users.append(user)
+    return users
+
 def get_all_subscriptions(dirs: bool = False):
     subscriptions = subscription_repository.get_all_subscriptions()
     models = [SubScripts(**subscription) for subscription in subscriptions]
